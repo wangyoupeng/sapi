@@ -33,8 +33,8 @@ const authApi = require('./app/routers/auth.js');
 app.use(authApi())
 
 // app 路由注册 暂时做 checkJwt 校验
-// const appApis = require('./app/routers/appapis.js');
-// app.use(appApis());
+const appApis = require('./app/routers/appapis.js');
+app.use(appApis());
 
 // authJwtMiddleware 登陆即权限检查
 app.use(checkJwt)
