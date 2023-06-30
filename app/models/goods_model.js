@@ -56,5 +56,11 @@ module.exports = {
     console.log('------------------ sql:::', sql)
     return await db.query(sql, paramsList);
   },
+  ListByIds: async (idList) => {
+    console.log("-----000: ", idList)
+    const placeholders = idList.map(() => '?').join(', ');
+    let sql = `select * from ${TableName} where is_del=0 and id in ( ${ placeholders } ) `;
+    return await db.query(sql,idList);
+  },
   
 }

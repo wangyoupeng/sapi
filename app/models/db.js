@@ -49,14 +49,16 @@ function query(sql, params) {
 
 // 封装一个函数来开始事务
 function beginTransaction() {
-  pool.getConnection((err, connection) => {
-    if(err){reject(err);}
-    connection.beginTransaction((beginTransaction) => {
-      if (c) {
-        reject(err);
-      } else {
-        resolve();
-      }
+  return new Promise((resolve, reject) => {
+    pool.getConnection((err, connection) => {
+      if(err){reject(err);}
+      connection.beginTransaction((beginTransaction) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
     });
   })
 }

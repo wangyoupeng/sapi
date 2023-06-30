@@ -3,27 +3,49 @@
  */
 const db = require('./db.js');
 const TableName = "orders"
+const TableNameOrderItems = "order_items"
+
+// 生成不重复的订单号
+function generateOrderNumber() {
+  const timestamp = Date.now().toString(); // 当前时间戳
+  const randomNum = Math.floor(Math.random() * 1000).toString().padStart(3, '0'); // 三位随机数
+  const orderNumber = `${timestamp}${randomNum}`;
+  return orderNumber;
+}
 
 module.exports = {
-  CreateWhitTransaction: async ({ user_id, goodsItemList}) => {
+  CreateWhitTransaction: async ({ user_id, goodsIdItemMap, }) => { //goodsItemList
     // 参数校验
     
     try {
       // 开启事务
       await db.beginTransaction();
       // 创建订单
-      sql = `insert into ${TableName} 
-      (name, description, image_url, price, stock) 
-      values(?,?,?,?,?)`;
-      await db.query(sql, ['John Doe', 28]);
-      // 扣减库存
-      // await db.query('UPDATE users SET age = ? WHERE name = ?', [30, 'John Doe']);
-      await commitTransaction();
-      ctx.body = '事务执行成功！';
+      let orderNo = generateOrderNumber();
+      
+      let sql = `insert into ${TableName} 
+      (order_no, user_id) 
+      values(?,?)`;
+      let {insertId} = await db.query(sql, [orderNo,user_id ]); // 可认为是order_id
+
+      // 保存orderItem
+      console.log("xxxxxxxxxxxxx:::",goodsIdItemMap )
+      for(let k = 0; k < Object.keys(goodsIdItemMap).length ; k ++){
+        let gItem = goodsIdItemMap[Object.keys(goodsIdItemMap)[k]] || {}
+        let sql = `insert into ${TableNameOrderItems} 
+          (order_id, order_no,user_id,goods_id , goods_name, amount, price,price_total) 
+          values
+          (?, ?,?,?,?,?,?,?)`;
+        await db.query(sql, [insertId, orderNo,user_id,Object.keys(goodsIdItemMap)[k], gItem.name,gItem.amount,gItem.price,gItem.amount * gItem.price]); // 可认为是order_id
+      }
+      // 扣减库存 （TODO 暂时不扣）
+      await db.commitTransaction();
+      return 'ok'
+      // 减购物车：
     } catch (err) {
       // 回滚事务并处理错误
       await db.rollbackTransaction(err);
-      ctx.body = '创建事务执行失败';
+      return 'ok'
     }
 
 
