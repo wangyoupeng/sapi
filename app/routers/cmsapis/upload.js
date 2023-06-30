@@ -1,5 +1,5 @@
 
-const uploadController = require('../../controllers/uploadController')
+const uploadController = require('../../controllers/upload_controller')
 
 module.exports = ( router ) => {
   router

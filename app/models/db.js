@@ -5,9 +5,8 @@ var mysql = require('mysql');
 const { dbConfig } = require('../../config');
 var pool = mysql.createPool(dbConfig);
 
-var db = {};
 
-db.query = function (sql, params) {
+function query(sql, params) {
 
   return new Promise((resolve, reject) => {
     // 取出链接
@@ -32,5 +31,70 @@ db.query = function (sql, params) {
     });
   });
 }
+// 封装一个函数来执行SQL查询
+// function query(sql, values) {
+//   return new Promise((resolve, reject) => {
+//     connection.query(sql, values, (err, results) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         resolve(results);
+//       }
+//     });
+//   });
+// }
+
+
+
+// 封装一个函数来开始事务
+function beginTransaction() {
+  pool.getConnection((err, connection) => {
+    if(err){reject(err);}
+    connection.beginTransaction((beginTransaction) => {
+      if (c) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  })
+}
+
+// 封装一个函数来提交事务
+function commitTransaction() {
+  return new Promise((resolve, reject) => {
+    pool.getConnection((err, connection) => {
+      if(err){reject(err);}
+      connection.commit((err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    })
+    
+  });
+}
+
+// 封装一个函数来回滚事务
+function rollbackTransaction(err) {
+  return new Promise((resolve, reject) => {
+    pool.getConnection((err1, connection) => {
+      if(err1){reject(err1);}
+      connection.rollback(() => {
+        reject(err);
+      });
+    })
+  });
+}
+
+
+
 // 导出对象
-module.exports = db;
+module.exports = {
+  query,
+  beginTransaction,
+  commitTransaction,
+  rollbackTransaction,
+};

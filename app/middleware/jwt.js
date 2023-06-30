@@ -11,6 +11,7 @@ const authJwtMiddleware = async(ctx, next) => {
       ctx.state.user = decoded;// payload: { userId, userName}
       await next();
     } else {
+      // 更改状态 wyp 
       return sendApiResult(ctx, {code: 400, message:"无效的token， 请重新登录" })
     }
   } else {

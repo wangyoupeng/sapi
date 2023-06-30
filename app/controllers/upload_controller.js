@@ -1,4 +1,3 @@
-
 const imageModel = require('../models/imageModel');
 const fs = require('fs');
 

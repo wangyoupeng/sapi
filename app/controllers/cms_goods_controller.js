@@ -40,14 +40,14 @@ async function updateById(ctx){
   sendApiResult(ctx, {})
 }
 async function list(ctx){
-  console.log("111")
+  // console.log("111")
   const { filterText, pageSize = 10, currentPage = 1 } = ctx.query;
   // 参数校验 TODO
   let params = { pageSize,currentPage }
   if(filterText) params.filterText = filterText
-  console.log("7777")
+  // console.log("7777")
   let {list, count} = await goodsModel.List(params)
-  console.log("88888")
+  // console.log("88888")
   let rList = list.map(item => {
     return {
       id: item.id,
