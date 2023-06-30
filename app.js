@@ -32,6 +32,8 @@ app.use(toplog);
 const authApi = require('./app/routers/auth.js');
 app.use(authApi())
 
+const uploadApi = require('./app/routers/upload.js');
+app.use(uploadApi())
 // app 路由注册 暂时做 checkJwt 校验
 const appApis = require('./app/routers/appapis.js');
 app.use(appApis());
