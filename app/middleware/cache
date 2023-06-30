@@ -1,0 +1,25 @@
+
+const redis = require('../libs/redis');
+
+// 应用 / 路由级别 Redis 缓存中间件
+// 注意不要重复注册
+async function cacheMiddleware(ctx, next) {
+  ctx.request.body
+  ctx.query
+  ctx.params
+  const bodyParams = { ... ctx.request.body || {}}
+  const cacheKey = `cache_${ctx.url}_${JSON.stringify(bodyParams)}`;
+  // 尝试从 Redis 中获取缓存数据
+  const cacheData = await redis.getAsync(cacheKey);
+  if (cacheData) {
+    // 如果有缓存数据，则直接返回缓存数据
+    ctx.body = cacheData;
+  } else {
+    // 否则，执行下一个中间件
+    await next();
+    // 将响应结果存储到缓存中，设置过期时间为 1 小时
+    await redis.setValueWithExpire(cacheKey, ctx.body, 3600)
+  }
+}
+
+module.exports = cacheMiddleware

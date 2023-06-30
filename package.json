@@ -15,11 +15,13 @@
     "koa-body": "^4.2.0",
     "koa-compose": "^4.1.0",
     "koa-multer": "^1.0.2",
+    "koa-ratelimit": "^5.0.1",
     "koa-router": "^7.4.0",
     "koa-session": "^5.12.3",
     "koa-static": "^5.0.0",
     "moment": "^2.29.4",
     "mysql": "^2.17.1",
+    "redis": "^4.6.7",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "require-dir": "^1.2.0"

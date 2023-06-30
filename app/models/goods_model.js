@@ -2,11 +2,10 @@
  * @Description: 商品模块数据持久层
  */
 const db = require('./db.js');
-const TableName = "goods"
+const TableName = "skus"
 
 module.exports = {
   Add: async (itemInfo) => {
-    console.log("------ 666---- itemInfo:", itemInfo)
     const sql = `insert into ${TableName} 
       (name, description, image_url, price, stock) 
       values(?,?,?,?,?)`;

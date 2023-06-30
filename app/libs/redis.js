@@ -1,7 +1,6 @@
 
 const redis = require('redis');
 
-const { redisOption } = require('config');
 const redisOption = {
   host: "127.0.0.1",
   prot: 6379
@@ -22,9 +21,7 @@ client.setValueWithExpire = async function(k, v, expire) {
   await client.expireAsync(k, parseInt(expire));
 };
 
-client.setHashValueWithExpire = async function(k, v, expire) {
-  await client.hmsetAsync(k, v);
-  await client.expireAsync(k, parseInt(expire));
-};
+
+// const cache = await client.getAsync(id);
 
 module.exports = client;
