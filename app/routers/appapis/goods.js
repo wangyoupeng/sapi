@@ -6,5 +6,5 @@ const usecacheMiddlware = require("../../middleware/cache");
 module.exports =(router) => {
   router
     // .post('/goods/list', cmsGoodsController.add)
-    .get('/goods', usecacheMiddlware, appGoodsController.list)
+    .get('/goods', appGoodsController.list) // usecacheMiddlware
 }

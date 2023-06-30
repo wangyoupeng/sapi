@@ -7,6 +7,7 @@ var pool = mysql.createPool(dbConfig);
 
 
 function query(sql, params) {
+  console.log("======== db query sql========:::", sql)
 
   return new Promise((resolve, reject) => {
     // 取出链接

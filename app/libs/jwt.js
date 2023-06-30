@@ -12,7 +12,7 @@ const verifyToken = (token) => {
     const decoded = jwt.verify(token, secretKey);
     return decoded;
   } catch (error) {
-    console.log("verifyToken error :::: ",error);
+    console.log("verifyToken error ,token 过期了 .. ");
     return null;
   }
 };

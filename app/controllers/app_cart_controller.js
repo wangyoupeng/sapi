@@ -46,37 +46,12 @@ module.exports = {
    * 删除用户的收藏商品信息
    * @param {Object} ctx
    */
-  DeleteCollect: async ctx => {
-    let { user_id, product_id } = ctx.request.body;
-    // 校验用户是否登录
-    if (!checkLogin(ctx, user_id)) {
-      return;
-    }
+  DeleteGoods: async ctx => {
+    let { goods_id } = ctx.request.body;
 
     // 判断该用户的收藏列表是否存在该商品
-    let tempCollect = await collectDao.FindCollect(user_id, product_id);
+    const result = await cartModel.ClearGoods({user_id,goods_id});
 
-    if (tempCollect.length > 0) {
-      // 如果存在则删除
-      try {
-        const result = await collectDao.DeleteCollect(user_id, product_id);
-        // 判断是否删除成功
-        if (result.affectedRows === 1) {
-          ctx.body = {
-            code: '001',
-            msg: '删除收藏成功'
-          }
-          return;
-        }
-      } catch (error) {
-        reject(error);
-      }
-    } else {
-      // 不存在则返回信息
-      ctx.body = {
-        code: '002',
-        msg: '该商品不在收藏列表'
-      }
-    }
+    sendApiResult(ctx, {})
   }
 }

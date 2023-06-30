@@ -22,22 +22,25 @@ module.exports = {
 // FROM users
 // INNER JOIN orders ON users.id = orders.user_id;
     let sql = `select 
-      carts.amount as amount, goods.name as name, goods.image_url as imageUrl, goods.price as price 
+      carts.goods_id as goods_id, carts.amount as amount, goods.name as name, goods.image_url as imageUrl, goods.price as price 
       from ${TableName} 
-      left join goods on ${TableName}.goods_id = goods.id 
+      left join skus as goods on ${TableName}.goods_id = goods.id 
       where carts.user_id = ? `
     // sql += ` ORDER BY goods.create_time asc`
     let list = await db.query(sql, [user_id]);
     return list
   },
-  ClearGoods: async (user_id = 'xxxx', goods_id = 'xxxx') => { // todo
+  ClearGoods: async ({user_id = 'xxxx', goods_id = 'xxxx'}) => { // todo
+    const sql1 = `select goods_id from ${TableName} 
+      order by id desc limit 1`
+    let res1 =  await db.query(sql1, []);
     const sql = `delete from ${TableName} 
       where user_id = ? and goods_id = ?`
-    return await db.query(sql, [user_id, goods_id]);
+    return await db.query(sql, [user_id, res1[0].goods_id]);
   },
   ClearCert: async (user_id) => { // todo
     const sql = `delete from ${TableName} 
-      where user_id = ? and goods_id = ?`
-    return await db.query(sql, [goods_id]);
+      where user_id = ?`
+    return await db.query(sql, [user_id]);
   },
 }

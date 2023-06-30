@@ -43,14 +43,17 @@ module.exports = {
   },
   // 连接数据库,获取用户的某个收藏商品信息
   UpdateById: async (id, updateInfo) => {
+    console.log("-----000: ", updateInfo)
     let setStr = ""
     let paramsList = []
     for(let k in updateInfo){
-      setStr += `${k}=?`
+      console.log("-----",k)
+      setStr += `${k}=? `
       paramsList.push(updateInfo[k])
     }
     paramsList.push(id)
-    const sql = `update ${TableName} set ${setStr} where id =?`;
+    const sql = `update ${TableName} set ${setStr} where id=?`;
+    console.log('------------------ sql:::', sql)
     return await db.query(sql, paramsList);
   },
   

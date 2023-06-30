@@ -22,8 +22,10 @@ async function deleteById(ctx){ // 硬删除 慎用
 }
 async function removeById(ctx){ // 软删除
   // 参数校验 TODO
-  let goodsId = ctx.request.body.goods_id
+  let goodsId = ctx.request.body.params.goods_id
+  console.log("aaaaaaaa :", goodsId)
   let resModel = await goodsModel.RemoveById(goodsId)
+  
   sendApiResult(ctx, {})
 }
 async function updateById(ctx){
@@ -33,7 +35,7 @@ async function updateById(ctx){
   let params = ctx.request.body
   if(params.hasOwnProperty("name")) itemInfo.name = params.name
   if(params.hasOwnProperty("description")) itemInfo.description = params.description
-  if(params.hasOwnProperty("imageUrl")) itemInfo.imageUrl = params.imageUrl
+  if(params.hasOwnProperty("imageUrl")) itemInfo.image_url = params.imageUrl
   if(params.hasOwnProperty("price")) itemInfo.price = params.price
   if(params.hasOwnProperty("stock")) itemInfo.stock = params.stock
   let resModel = await goodsModel.UpdateById(goodsId, itemInfo)

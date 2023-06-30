@@ -1,5 +1,5 @@
 
-const redis = require('redis');
+const redis = require('ioredis');
 
 const redisOption = {
   host: "127.0.0.1",
@@ -12,16 +12,18 @@ console.log('load-redis-option', JSON.stringify(opt));
 
 const client = redis.createClient(opt);
 
-client.on('error', (err) => { console.log(`Redis Error ${err}`, 'App'); });
-client.on('ready', () => { console.log('Redis Ready Now', 'App'); });
-client.on('connect', () => {});
+module.exports = {
+  async set(key, value) {
+    await redis.set(key, value);
+  },
+  
+  async get(key) {
+    return await redis
+  },
 
-client.setValueWithExpire = async function(k, v, expire) {
-  await client.setAsync(k, v);
-  await client.expireAsync(k, parseInt(expire));
+  async setWithExpiration(key, value, seconds) {
+    await redis.set(key, value, 'EX', seconds);
+  },
+  
+  // 添加其他常见的 Redis 操作
 };
-
-
-// const cache = await client.getAsync(id);
-
-module.exports = client;

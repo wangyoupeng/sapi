@@ -11,7 +11,6 @@ module.exports = {
   OrderNew: async ctx => {
     console.log("-------000----- ctx.body :: ", ctx.body)
     // goodsVersion TODO
-    orderModel
     // 检查库存 略
      // 下单 （事务）
     let goodsItemList = []
