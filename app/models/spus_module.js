@@ -1,28 +1,34 @@
 /*
  * @Description: 商品模块数据持久层
  */
-// 拟废弃
 const db = require('./db.js');
-const TableName = "skus"
+const TableName = "spus"
 
 module.exports = {
   Add: async (itemInfo) => {
     const sql = `insert into ${TableName} 
-      (name, description, image_url, price, stock) 
-      values(?,?,?,?,?)`;
+      (spu_id, name, description, image_url) 
+      values(?,?,?,?)`;
     return await db.query(sql, [
+      itemInfo.spu_id,
       itemInfo.name,
       itemInfo.description || "",
       itemInfo.imageUrl || "",
-      itemInfo.price || 0,
-      itemInfo.stock || 0,
     ]);
   },
   DeleteById: async (id) => {
     const sql = `delete from ${TableName}  where id=?`;
     return await db.query(sql, [id]);
   },
+  DeleteBySpuId: async (spu_id) => {
+    const sql = `delete from ${TableName}  where spu_id=?`;
+    return await db.query(sql, [spu_id]);
+  },
   RemoveById: async (id) => {
+    const sql = `update ${TableName} SET is_del = 1 where id=?`;
+    return await db.query(sql, [id]);
+  },
+  RemoveBySpuId: async (id) => {
     const sql = `update ${TableName} SET is_del = 1 where id=?`;
     return await db.query(sql, [id]);
   },

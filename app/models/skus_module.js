@@ -1,7 +1,6 @@
 /*
  * @Description: 商品模块数据持久层
  */
-// 拟废弃
 const db = require('./db.js');
 const TableName = "skus"
 

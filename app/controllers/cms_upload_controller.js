@@ -1,4 +1,4 @@
-const imageModel = require('../models/imageModel');
+const imageModel = require('../models/image_model');
 const fs = require('fs');
 const multer = require('koa-multer');
 
