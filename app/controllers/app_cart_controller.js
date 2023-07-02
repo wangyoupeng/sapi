@@ -22,6 +22,20 @@ module.exports = {
     sendApiResult(ctx, {})
     return;
   },
+  // 收藏减数量
+  DecCart: async ctx => {
+    let { goods_id = 'xxx', amount = -1 } = ctx.request.body;
+    let findRes = await cartModel.Find({user_id, goods_id});
+    await cartModel.AddAmount({user_id, goods_id, amount})
+    sendApiResult(ctx, {})
+    return;
+  },
+  IncCart: async ctx => {
+    let { goods_id = 'xxx', amount = 1 } = ctx.request.body;
+    await cartModel.AddAmount({user_id, goods_id, amount})
+    sendApiResult(ctx, {})
+    return;
+  },
   /**
    * 获取用户的所有收藏商品信息
    * @param {Object} ctx
@@ -29,7 +43,7 @@ module.exports = {
   ListCart: async ctx => {
     // 获取所有收藏信息
     const resList = await cartModel.List({user_id});
-    console.log("--------111-::::", resList)
+    // console.log("--------111-::::", resList)
     let rList = resList.map(item => {
       return {
         id: item.goods_id,

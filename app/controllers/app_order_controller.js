@@ -13,6 +13,7 @@ module.exports = {
   OrderNew: async ctx => {
     let goodsList = await cartModel.List({user_id})
 
+
     let goodsIdList = []
     let goodsIdItemMap = {}
     let goodIdAmountMap = {}
