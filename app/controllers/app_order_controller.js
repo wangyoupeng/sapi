@@ -9,38 +9,55 @@ const goodsModel = require('../models/goods_model');
 // 参考后端服务, app端略去, 给定默认用户 user_id
 const user_id = 10000
 
-module.exports = {
-  OrderNew: async ctx => {
-    let goodsList = await cartModel.List({user_id})
+
+async function OrderNew (ctx){
+  let goodsList = await cartModel.List({user_id})
 
 
-    let goodsIdList = []
-    let goodsIdItemMap = {}
-    let goodIdAmountMap = {}
+  let goodsIdList = []
+  let goodsIdItemMap = {}
+  let goodIdAmountMap = {}
 
-    let goodsItemList = goodsList.map((item) => {
-      goodsIdList.push(item.goods_id)
-      goodIdAmountMap[item.goods_id] = item.amount
-    })
+  let goodsItemList = goodsList.map((item) => {
+    goodsIdList.push(item.goods_id)
+    goodIdAmountMap[item.goods_id] = item.amount
+  })
 
 
-    let goodsListAll = await goodsModel.ListByIds(goodsIdList)
-    goodsListAll.map(item => {
-      let newItem = {amount:goodIdAmountMap['' + item.id], ...item}
-      goodsIdItemMap[item.id] = newItem
-    })
-    
-    // console.log('xxxxxx', goodsIdItemMap)
-    // goodsVersion TODO
-    // 检查库存 略
-     // 下单 （事务）
-    
-    // 组装参数
-    orderModel.CreateWhitTransaction({ user_id, goodsIdItemMap})
-    // 生成根据order_id 保存order_item
-    // 清空购物车 TODO
-    // 减购物车：
-    await cartModel.ClearCert(user_id || 'xxxxx')
-    sendApiResult(ctx,{})
-  },
+  let goodsListAll = await goodsModel.ListByIds(goodsIdList)
+  goodsListAll.map(item => {
+    let newItem = {amount:goodIdAmountMap['' + item.id], ...item}
+    goodsIdItemMap[item.id] = newItem
+  })
+  
+  // console.log('xxxxxx', goodsIdItemMap)
+  // goodsVersion TODO
+  // 检查库存 略
+    // 下单 （事务）
+  
+  // 组装参数
+  orderModel.CreateWhitTransaction({ user_id, goodsIdItemMap})
+  // 生成根据order_id 保存order_item
+  // 清空购物车 TODO
+  // 减购物车：
+  await cartModel.ClearCert(user_id || 'xxxxx')
+  sendApiResult(ctx,{})
 }
+
+async function OrderList(ctx){
+  const { filterText, pageSize = 10, currentPage = 1 } = ctx.query;
+  // 参数校验 TODO
+  let params = { pageSize,currentPage }
+  if(filterText) params.filterText = filterText
+  let {list, count} = await orderModel.List(params)
+  
+
+  sendApiResult(ctx, {data: { list, total: count[0].total }})
+}
+
+module.exports = {
+  OrderNew,
+  OrderList
+}
+
+

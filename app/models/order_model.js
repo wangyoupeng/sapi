@@ -71,16 +71,45 @@ module.exports = {
   List: async ({ filterText, pageSize = 10, currentPage = 1}) => {
     // search
     let sql = `select * from ${TableName} where is_del=0 `;
-    if(filterText) sql += ` and name like "%${ filterText }%"`
     sql += ` ORDER BY id DESC`
     sql += ` limit ${pageSize} offset ${currentPage * pageSize - pageSize}`
-    let list = await db.query(sql);
+    let list = await await db.query(sql);
     // count
     let countSql = `select count(*) as total from ${TableName} where is_del=0`
-    if(filterText) countSql += ` and name like "%${ filterText }%"`
-    let count = await db.query(countSql)
+    let count = await await db.query(countSql)
     // return res
-    return {list , count}
+    const placeholdersList = []
+    let orderIdList = list.map((i) => {
+      placeholdersList.push('?')
+      return i.id
+    })
+    
+    let orderItemSql = `select order_id, amount, goods_name from ${TableNameOrderItems} where is_del=0 and order_id in ( ${ placeholdersList.join(', ') } ) `;
+    let itemList = await db.query(orderItemSql,orderIdList);
+    let orderIdOrderItemMap = {}
+    // console.log('---------', typeof itemList, itemList)
+    for(let i of itemList){
+      if(orderIdOrderItemMap[i.order_id]){
+        orderIdOrderItemMap[i.order_id].push({
+          goods_name: i.goods_name,
+          amount: i.amount,
+        })
+      } else {
+        orderIdOrderItemMap[i.order_id] = [{
+          goods_name: i.goods_name,
+          amount: i.amount,
+        }]
+      }
+    }
+
+    let newList = list.map((item) => {
+      let orderItems = orderIdOrderItemMap[item.id] || []
+      return {...{orderItems}, ...item}
+    })
+
+    // console.log('--------- 2222:', JSON.stringify(newList))
+
+    return {list: newList , count}
   },
   
 }
