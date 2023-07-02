@@ -14,15 +14,15 @@ const client = redis.createClient(opt);
 
 module.exports = {
   async set(key, value) {
-    await redis.set(key, value);
+    await client.set(key, value);
   },
   
   async get(key) {
-    return await redis
+    return await client.get(key)
   },
 
   async setWithExpiration(key, value, seconds) {
-    await redis.set(key, value, 'EX', seconds);
+    await client.set(key, value, 'EX', seconds);
   },
   
   // 添加其他常见的 Redis 操作
