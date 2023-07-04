@@ -2,7 +2,7 @@ const rateLimit = require("koa-ratelimit");
 // const { redisClient } = require("../libs/redis")
 // 限制每分钟最多 100 个请求
 const db = new Map();
-rateLimit({
+let midd = rateLimit({
   driver: 'memory',
   db: db,
   // driver: 'redis',
@@ -12,4 +12,4 @@ rateLimit({
   message: "请求过于频繁，请稍后再试", // 超过限制的提示信息
   // errorMessage: "请求过于频繁，请稍后再试", // 超过限制的提示信息
 });
-module.exports = rateLimit
+module.exports = midd
