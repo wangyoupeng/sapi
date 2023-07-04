@@ -22,7 +22,7 @@ async function deleteById(ctx){ // 硬删除 慎用
 }
 async function removeById(ctx){ // 软删除
   // 参数校验 TODO
-  let goodsId = ctx.request.body.params.goods_id
+  let goodsId = ctx.request.body.goods_id
   console.log("aaaaaaaa :", goodsId)
   let resModel = await goodsModel.RemoveById(goodsId)
   

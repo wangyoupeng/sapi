@@ -34,15 +34,15 @@ app.use(rewriteUrl);
 app.use(KoaStatic(staticDir));
 
 // // 限流 三方
-const rateLimit = require('./app/middleware/rateLimit');
-app.use(rateLimit)
+// const rateLimit = require('./app/middleware/rateLimit');
+// app.use(rateLimit)
 
 // // 添加令牌桶限流中间件
 // const rateLimitMy = require('./app/middleware/rateLimitMy');
 // app.use(rateLimitMy()); // 10个请求/10秒
 
-const cacheMiddlware = require("./app/middleware/cache");
-app.use(cacheMiddlware)
+// const cacheMiddlware = require("./app/middleware/cache");
+// app.use(cacheMiddlware)
 
 
 // // 图片处理
@@ -58,11 +58,11 @@ app.use(authApi())
 
 
 // authJwtMiddleware 登陆即权限检查
-// app.use(checkJwt)
+app.use(checkJwt)
 
 // cms API 路由
-// const cmsApis = require('./app/routers/cmsapis.js');
-// app.use(cmsApis());
+const cmsApis = require('./app/routers/cmsapis.js');
+app.use(cmsApis());
 
 app.listen(Port, () => {
   console.log(`服务器启动在${ Port }端口`);
