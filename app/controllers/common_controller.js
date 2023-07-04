@@ -8,7 +8,6 @@ async function login( ctx ){
   // 根据用户提供的用户名和密码进行验证 数据库查询 users
   //
   let list = await usersModel.FindOne(username, pwd)
-  console.log("------111---", list)
   if(list.length == 0){
     sendApiResult(ctx, { data: {}, code : 200, message: "用户/名密码错误"})
     return false;
@@ -19,16 +18,28 @@ async function login( ctx ){
     userId: uItem.id,
     userName : uItem.name
   }
-  console.log("------222---", userInfo)
 
   // 如果验证成功，则创建 JWT 并发送响应
   const payload = { ...userInfo};
-  console.log("------333---", payload)
   const token = jwt.generateToken(payload);
-  console.log("------444---", token)
     sendApiResult(ctx, {data: { token, userInfo }})
+}
+
+async function regist( ctx ){
+  const { username, password, email } = ctx.request.body;
+  // 根据用户提供的用户名和密码进行验证 数据库查询 users
+  let list = await usersModel.FindUserName(username)
+  if(list.length > 0){
+    sendApiResult(ctx, { data: {}, message: "用户已存在"})
+    return false;
+  }
+  // insert user
+  let insertRes = await usersModel.Create(username, password, email)
+  console.log("-------- createuser insertRes : ", insertRes)
+  sendApiResult(ctx, {data: {}, message: 'ok'})
 }
 
 module.exports = {
   login,
+  regist,
 }

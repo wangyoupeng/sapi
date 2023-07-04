@@ -11,12 +11,12 @@ module.exports = {
   },
   // 连接数据库根据用户名查询用户信息
   FindUserName: async (username) => {
-    const sql = `select * from ${TableName} where username = ?`;
+    const sql = `select * from ${TableName} where name = ?`;
     return await db.query(sql, [username]);
   },
   // 连接数据库插入用户信息
-  Register: async (username, pwd) => {
-    const sql = `insert into ${TableName} values(null,?,?,null)`;
-    return await db.query(sql, [username, password]);
+  Create: async (username, pwd, email = "") => {
+    const sql = `insert into ${TableName} (name, pwd, email) values(?,?,?)`;
+    return await db.query(sql, [username, pwd, email]);
   }
 }
