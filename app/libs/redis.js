@@ -12,18 +12,20 @@ console.log('load-redis-option', JSON.stringify(opt));
 
 const client = redis.createClient(opt);
 
-module.exports = {
-  async set(key, value) {
-    await client.set(key, value);
-  },
-  
-  async get(key) {
-    return await client.get(key)
-  },
+async function set(key, value) {
+  await client.set(key, value);
+}
 
-  async setWithExpiration(key, value, seconds) {
-    await client.set(key, value, 'EX', seconds);
-  },
-  
-  // 添加其他常见的 Redis 操作
-};
+async function get(key) {
+  return await client.get(key)
+}
+
+async function setWithExpiration(key, value, seconds) {
+  await client.set(key, value, 'EX', seconds);
+}
+module.exports = {
+  set,
+  get,
+  setWithExpiration,
+  redisClient: client,
+}
