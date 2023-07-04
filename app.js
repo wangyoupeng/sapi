@@ -11,7 +11,7 @@ let app = new Koa();
 
 // 处理异常
 const error = require('./app/middleware/error');
-app.use(error);
+app.use(error());
 
 // 全局api log
 const toplog = require('./app/middleware/toplog');

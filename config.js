@@ -14,5 +14,13 @@ module.exports = {
     user: 'root',
     password: 'wyp137177',
     database: 'store'
-  }
+  },
+  errorConfig : {
+    development: {
+      debug: true
+    },
+    production: {
+      debug: false
+    }
+  },
 }

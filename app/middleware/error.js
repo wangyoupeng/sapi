@@ -1,13 +1,9 @@
 
-module.exports = async (ctx, next) => {
-  try {
-    await next();
-  } catch (error) {
-    throw error
-    console.error(error);
-    ctx.body = {
-      code: '500',
-      msg: error
-    }
-  }
+const jsonError = require("koa-json-error")
+const { errorConfig } = require('../../config')
+
+module.exports = () => {
+  const env = process.env.NODE_ENV || 'development';
+  const envConfig = errorConfig[env];
+  return jsonError(envConfig)
 }

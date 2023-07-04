@@ -16,6 +16,7 @@
     "koa-body": "^4.2.0",
     "koa-bodyparser": "^4.4.1",
     "koa-compose": "^4.1.0",
+    "koa-json-error": "^3.1.2",
     "koa-multer": "^1.0.2",
     "koa-ratelimit": "^5.0.1",
     "koa-router": "^7.4.0",
