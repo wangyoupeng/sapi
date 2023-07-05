@@ -1,6 +1,7 @@
 /*
  * @Description: 订单模块数据持久层
  */
+const moment = require('moment')
 const db = require('./db.js');
 const TableName = "orders"
 const TableNameOrderItems = "order_items"
@@ -24,16 +25,18 @@ module.exports = {
       // 商品库存加锁
       let goodsIds = Object.keys(goodsIdItemMap)
       await GoodsModel.LockRows(goodsIds)
+      let orderPrice = 0
       // 扣减库存
       for(let k in goodsIdItemMap){
         await GoodsModel.StockCutById(k,goodsIdItemMap[k].amount)
+        orderPrice += (goodsIdItemMap[k].price * goodsIdItemMap[k].amount)
       }
       // 创建订单
       let orderNo = generateOrderNumber();
       let sql = `insert into ${TableName} 
-      (order_no, user_id) 
-      values(?,?)`;
-      let {insertId} = await db.query(sql, [orderNo,user_id ]); // 可认为是order_id
+      (order_no, user_id, price) 
+      values(?,?,?)`;
+      let {insertId} = await db.query(sql, [orderNo,user_id, orderPrice ]); // 可认为是order_id
       // 保存orderItem
       for(let k = 0; k < Object.keys(goodsIdItemMap).length ; k ++){
         let gItem = goodsIdItemMap[Object.keys(goodsIdItemMap)[k]] || {}
@@ -90,7 +93,7 @@ module.exports = {
 
     let newList = list.map((item) => {
       let orderItems = orderIdOrderItemMap[item.id] || []
-      return {...{orderItems}, ...item}
+      return {...{orderItems}, ...item, ...{created_at: moment(item.created_at).format("YYYY-MM-DD HH:mm:ss"), updated_at: moment(item.updated_at)}}
     })
 
     // console.log('--------- 2222:', JSON.stringify(newList))

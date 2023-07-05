@@ -31,8 +31,8 @@ module.exports = {
       itemInfo.name,
       itemInfo.description || "",
       itemInfo.imageUrl || "",
-      itemInfo.price || 0,
-      itemInfo.stock || 0,
+      itemInfo.price ? parseInt(itemInfo.price) : 0,
+      itemInfo.stock ? parseInt(itemInfo.stock) : 0,
     ]);
   },
   DeleteById: async (id) => {
@@ -60,17 +60,16 @@ module.exports = {
   },
   // 连接数据库,获取用户的某个收藏商品信息
   UpdateById: async (id, updateInfo) => {
-    console.log("-----000: ", updateInfo)
     let setStr = ""
     let paramsList = []
+    if(updateInfo.stock) updateInfo.stock = parseInt(updateInfo.stock)
+    if(updateInfo.price) updateInfo.price = parseInt(updateInfo.price * 100)
     for(let k in updateInfo){
-      console.log("-----",k)
-      setStr += `${k}=? `
+      setStr += `, ${k}=? `
       paramsList.push(updateInfo[k])
     }
     paramsList.push(id)
-    const sql = `update ${TableName} set ${setStr} where id=?`;
-    console.log('------------------ sql:::', sql)
+    const sql = `update ${TableName} set is_del=0 ${setStr} where id=?`;
     return await db.query(sql, paramsList);
   },
   StockCutById: async (id, amount) => {
@@ -78,7 +77,6 @@ module.exports = {
     return await db.query(sql, [amount, id]);
   },
   ListByIds: async (idList) => {
-    console.log("-----000: ", idList)
     const placeholders = idList.map(() => '?').join(', ');
     let sql = `select * from ${TableName} where is_del=0 and id in ( ${ placeholders } ) `;
     return await db.query(sql,idList);
