@@ -48,7 +48,7 @@ module.exports = {
       return {
         id: item.goods_id,
         name: item.name,
-        quantity: item.amount,
+        amount: item.amount,
         imageUrl : item.image_url,
         price: item.price
       }

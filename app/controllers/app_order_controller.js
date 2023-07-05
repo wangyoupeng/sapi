@@ -11,8 +11,8 @@ const user_id = 10000
 
 
 async function OrderNew (ctx){
+  console.log("------- 000000 ordernew ---- ::",ctx.request.body)
   let goodsList = await cartModel.List({user_id})
-
 
   let goodsIdList = []
   let goodsIdItemMap = {}
