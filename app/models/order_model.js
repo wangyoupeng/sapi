@@ -4,6 +4,7 @@
 const db = require('./db.js');
 const TableName = "orders"
 const TableNameOrderItems = "order_items"
+const GoodsModel = require("./goods_model")
 
 // 生成不重复的订单号
 function generateOrderNumber() {
@@ -14,22 +15,26 @@ function generateOrderNumber() {
 }
 
 module.exports = {
-  CreateWhitTransaction: async ({ user_id, goodsIdItemMap, }) => { //goodsItemList
-    // 参数校验
-    
+  CreateWhitTransaction: async ({ user_id, goodsIdItemMap }) => {
+    // 参数校验 略
     try {
-      // 开启事务
+      // 库存加锁 // todo
+      // 开启事务*****************事务 start ******************
       await db.beginTransaction();
+      // 商品库存加锁
+      let goodsIds = Object.keys(goodsIdItemMap)
+      await GoodsModel.LockRows(goodsIds)
+      // 扣减库存
+      for(let k in goodsIdItemMap){
+        await GoodsModel.StockCutById(k,goodsIdItemMap[k].amount)
+      }
       // 创建订单
       let orderNo = generateOrderNumber();
-      
       let sql = `insert into ${TableName} 
       (order_no, user_id) 
       values(?,?)`;
       let {insertId} = await db.query(sql, [orderNo,user_id ]); // 可认为是order_id
-
       // 保存orderItem
-      console.log("xxxxxxxxxxxxx:::",goodsIdItemMap )
       for(let k = 0; k < Object.keys(goodsIdItemMap).length ; k ++){
         let gItem = goodsIdItemMap[Object.keys(goodsIdItemMap)[k]] || {}
         let sql = `insert into ${TableNameOrderItems} 
@@ -38,33 +43,14 @@ module.exports = {
           (?, ?,?,?,?,?,?,?)`;
         await db.query(sql, [insertId, orderNo,user_id,Object.keys(goodsIdItemMap)[k], gItem.name,gItem.amount,gItem.price,gItem.amount * gItem.price]); // 可认为是order_id
       }
-      // 扣减库存 （TODO 暂时不扣）
-      await db.commitTransaction();
-      return 'ok'
       // 减购物车：
+      await db.commitTransaction();
+      // ************************* 事务 end ******************
     } catch (err) {
       // 回滚事务并处理错误
       await db.rollbackTransaction(err);
-      return 'ok'
+      throw new Error("Order create error !!!")
     }
-
-
-    // -------------------- 事务 start ------------
-      
-      // 减少库存 -------------- 事务
-      // 生成订单 -------------- 事务
-      // 生成 订单明细orderItem
-    // -------------------- 事务 end ---------
-    const sql = `insert into ${TableName} 
-      (name, description, image_url, price, stock) 
-      values(?,?,?,?,?)`;
-    return await db.query(sql, [
-      // itemInfo.name,
-      // itemInfo.description || "",
-      // itemInfo.imageUrl || "",
-      // itemInfo.price || 0,
-      // itemInfo.stock || 0,
-    ]);
   },
   
   // 连接数据库,获取用户的所有收藏商品信息

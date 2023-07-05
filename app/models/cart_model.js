@@ -38,9 +38,14 @@ module.exports = {
       where user_id = ? and goods_id = ?`
     return await db.query(sql, [user_id, goods_id || res1[0].goods_id]);
   },
-  ClearCert: async (user_id) => { // todo
-    const sql = `delete from ${TableName} 
+  ClearCert: async (user_id,goodsIds) => { // todo
+    let sql = `delete from ${TableName} 
       where user_id = ?`
-    return await db.query(sql, [user_id]);
+      let tempList = []
+      goodsIds.map(i=> tempList.push('?'))
+      if(goodsIds && goodsIds.length > 0){
+        sql += ` and goods_id in ( ${tempList.toString()} )`
+      }
+    return await db.query(sql, [user_id,...goodsIds]);
   },
 }

@@ -6,6 +6,23 @@ const db = require('./db.js');
 const TableName = "skus"
 
 module.exports = {
+  Lock: async () => {
+    let sql = `LOCK ${TableName} my_table WRITE`;
+    return await db.query(sql, []);
+  },
+  UnLock: async () => {
+    let sql = `UNLOCK ${TableName}`;
+    return await db.query(sql, []);
+  },
+  LockRows: async(goodsIds) => {
+    const placeholdersList = []
+    goodsIds.map((i) => {
+      placeholdersList.push('?')
+      return i.id
+    })
+    let sql = `SELECT * FROM ${TableName} WHERE id in (${placeholdersList.toString()}) FOR UPDATE`;
+    return await db.query(sql, [...goodsIds]);
+  },
   Add: async (itemInfo) => {
     const sql = `insert into ${TableName} 
       (name, description, image_url, price, stock) 
@@ -55,6 +72,10 @@ module.exports = {
     const sql = `update ${TableName} set ${setStr} where id=?`;
     console.log('------------------ sql:::', sql)
     return await db.query(sql, paramsList);
+  },
+  StockCutById: async (id, amount) => {
+    let sql = `UPDATE ${TableName} SET stock = stock - ? WHERE id = ?;`
+    return await db.query(sql, [amount, id]);
   },
   ListByIds: async (idList) => {
     console.log("-----000: ", idList)

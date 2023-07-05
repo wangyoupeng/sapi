@@ -12,7 +12,11 @@ const user_id = 10000
 
 async function OrderNew (ctx){
   console.log("------- 000000 ordernew ---- ::",ctx.request.body)
-  let goodsList = await cartModel.List({user_id})
+  // {
+  //   list: [ { goods_id: 10001, amount: 3 }, { goods_id: 10002, amount: 2 } ],
+  //   user_id: 10000
+  // }
+  let goodsList = ctx.request.body.list // await cartModel.List({user_id})
 
   let goodsIdList = []
   let goodsIdItemMap = {}
@@ -26,21 +30,17 @@ async function OrderNew (ctx){
 
   let goodsListAll = await goodsModel.ListByIds(goodsIdList)
   goodsListAll.map(item => {
-    let newItem = {amount:goodIdAmountMap['' + item.id], ...item}
+    let newItem = {...item, ...{amount: goodIdAmountMap['' + item.id]}}
     goodsIdItemMap[item.id] = newItem
   })
   
-  // console.log('xxxxxx', goodsIdItemMap)
   // goodsVersion TODO
   // 检查库存 略
-    // 下单 （事务）
-  
-  // 组装参数
-  orderModel.CreateWhitTransaction({ user_id, goodsIdItemMap})
-  // 生成根据order_id 保存order_item
-  // 清空购物车 TODO
-  // 减购物车：
-  await cartModel.ClearCert(user_id || 'xxxxx')
+  // 下单 （事务）生成order ,order_item, 扣库存
+  let isok = orderModel.CreateWhitTransaction({ user_id, goodsIdItemMap, goodIdAmountMap})
+  if(isok){
+    await cartModel.ClearCert(user_id || 'xxxxx', goodsIdList) // 可以事务里面
+  }
   sendApiResult(ctx,{})
 }
 
