@@ -7,22 +7,29 @@ async function login( ctx ){
   
   // 根据用户提供的用户名和密码进行验证 数据库查询 users
   //
-  let list = await usersModel.FindOne(username, pwd)
+  let list = await usersModel.FindByName(username)
   if(list.length == 0){
-    sendApiResult(ctx, { data: {}, code : 200, message: "用户/名密码错误"})
+    sendApiResult(ctx, { data: {}, code : 200, message: "用户不存在"})
     return false;
   }
   
   let uItem  = list[0]
+  //验证密码
+  console.log("-----11----: ",pwd, uItem.pwd, uItem.salt)
+  let isPwdOk = usersModel.authUser(pwd, uItem.pwd, uItem.salt)
+  console.log("-----66----: ",pwd, uItem.pwd, uItem.salt)
+  if(!isPwdOk){
+    sendApiResult(ctx, { data: {}, code : 200, message: "用户/名密码错误"})
+    return false;
+  }
   let userInfo = {
     userId: uItem.id,
     userName : uItem.name
   }
-
   // 如果验证成功，则创建 JWT 并发送响应
   const payload = { ...userInfo};
   const token = jwt.generateToken(payload);
-    sendApiResult(ctx, {data: { token, userInfo }})
+  sendApiResult(ctx, {data: { token, userInfo }})
 }
 
 async function regist( ctx ){
