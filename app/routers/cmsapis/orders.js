@@ -1,8 +1,8 @@
 
-const cmsGoodsController = require('../../controllers/cms_goods_controller')
+const cmsGoodsController = require('../../controllers/cms_orders_controller')
 
 
 module.exports =(router) => {
   router
-    .post('/orders/list', cmsGoodsController.add)
+    .get('/orders/list', cmsGoodsController.OrderList)
 }
