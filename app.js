@@ -1,17 +1,17 @@
 const Koa = require('koa');
+const path = require('path');
 const KoaStatic = require('koa-static');
 const KoaBody = require('koa-body');
 const checkJwt = require('./app/middleware/jwt');
-
-
-let { Port, staticDir } = require('./config');
+const config = require('config');
+const log4js = require('log4js');
 
 
 let app = new Koa();
 
 // 处理异常
-const error = require('./app/middleware/error');
-app.use(error());
+const catchError = require('./app/middleware/error');
+// app.use(catchError());
 
 // 全局api log
 const toplog = require('./app/middleware/toplog');
@@ -21,7 +21,7 @@ app.use(toplog);
 
 // // 处理请求体数据
 const koaBodyConfig = require('./app/middleware/koaBodyConfig');
-app.use(KoaBody(koaBodyConfig));
+app.use(KoaBody(koaBodyConfig,{}));
 
 const bodyParser = require('koa-bodyparser');
 app.use(bodyParser());
@@ -31,7 +31,7 @@ const rewriteUrl = require('./app/middleware/rewriteUrl');
 app.use(rewriteUrl);
 
 // // 使用koa-static处理静态资源
-app.use(KoaStatic(staticDir));
+app.use(KoaStatic(path.resolve('./public')));
 
 // // 限流 三方
 // const rateLimit = require('./app/middleware/rateLimit');
@@ -41,8 +41,8 @@ app.use(KoaStatic(staticDir));
 const rateLimitMy = require('./app/middleware/rateLimitMy');
 app.use(rateLimitMy()); // 10个请求/10秒
 
-const cacheMiddlware = require("./app/middleware/cache");
-app.use(cacheMiddlware)
+// const cacheMiddlware = require("./app/middleware/cache");
+// app.use(cacheMiddlware)
 
 
 // // 图片处理
@@ -64,6 +64,6 @@ app.use(checkJwt)
 const cmsApis = require('./app/routers/cmsapis.js');
 app.use(cmsApis());
 
-app.listen(Port, () => {
-  console.log(`服务器启动在${ Port }端口`);
+app.listen(config.app.port, () => {
+  console.log(`server start at env: ${ config.app.env }  port: ${ config.app.port }`);
 });

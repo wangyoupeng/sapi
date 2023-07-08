@@ -1,0 +1,22 @@
+{
+  "app": {
+    "port": 3000,
+    "apiVersion": "v1",
+    "domain": "127.0.0.1:3000",
+    "ip": "127.0.0.1",
+    "isDevelopment": true,
+    "env": "development"
+  },
+  "mysql": {
+    "connectionLimit": 10,
+    "host": "localhost",
+    "user": "root",
+    "password": "wyp137177",
+    "database": "store"
+  },
+  "redis": {
+    "host": "127.0.0.1",
+    "port": 6379,
+    "redis": 0
+  }
+}

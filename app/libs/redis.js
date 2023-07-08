@@ -1,14 +1,11 @@
 
 const redis = require('ioredis');
+const config = require('config');
 
-const redisOption = {
-  host: "127.0.0.1",
-  prot: 6379
-}
 
-const opt = { ...redisOption };
+const opt = { ...config.redis };
 
-console.log('load-redis-option', JSON.stringify(opt));
+console.log('init_redis_connected: ', JSON.stringify(opt));
 
 const client = redis.createClient(opt);
 

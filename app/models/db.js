@@ -2,9 +2,10 @@
  * @Description: 数据库连接
  */
 var mysql = require('mysql');
-const { dbConfig } = require('../../config');
-var pool = mysql.createPool(dbConfig);
+var config = require('config');
 
+var pool = mysql.createPool(config.mysql);
+console.log('init_mysql_connected', config.mysql.host);
 
 function query(sql, params) {
   console.log("======== db query sql========:::", sql)
