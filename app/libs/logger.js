@@ -73,11 +73,19 @@ function log4jsErrorLog(errmsg) {
   log4jslogger.error(errmsg);
 }
 
-function log(logmsg) {
-  if (log instanceof Error) {
-    log4jsErrorLog(logmsg);
+function log(...params) {
+  if (params[0] instanceof Error) {
+    log4jsErrorLog(params[0]);
   } else {
-    log4jsOutLog(JSON.stringify(logmsg));
+    let strList = []
+    strList = params.map(item => {
+      if(typeof item == 'string'){
+        return item
+      } else {
+        return JSON.stringify(item)
+      }
+    })
+    log4jsOutLog(strList.toString());
   }
 }
 

@@ -1,6 +1,7 @@
 
 const goodsModel = require('../models/goods_model');
 const { sendApiResult } = require('../libs/util');
+const logger = require('../libs/logger')
 
 async function add(ctx){
   // 参数校验 TODO
@@ -23,7 +24,7 @@ async function deleteById(ctx){ // 硬删除 慎用
 async function removeById(ctx){ // 软删除
   // 参数校验 TODO
   let goodsId = ctx.request.body.goods_id
-  console.log("aaaaaaaa :", goodsId)
+  logger.log("aaaaaaaa :", goodsId)
   let resModel = await goodsModel.RemoveById(goodsId)
   
   sendApiResult(ctx, {})
@@ -42,14 +43,14 @@ async function updateById(ctx){
   sendApiResult(ctx, {})
 }
 async function list(ctx){
-  // console.log("111")
+  // logger.log("111")
   const { filterText, pageSize = 10, currentPage = 1 } = ctx.query;
   // 参数校验 TODO
   let params = { pageSize,currentPage }
   if(filterText) params.filterText = filterText
-  // console.log("7777")
+  // logger.log("7777")
   let {list, count} = await goodsModel.List(params)
-  // console.log("88888")
+  // logger.log("88888")
   let rList = list.map(item => {
     return {
       id: item.id,
@@ -60,7 +61,6 @@ async function list(ctx){
       stock: item.stock
     }
   })
-  console.log("9999999")
   sendApiResult(ctx, {data: { list: rList, total: count[0].total }})
 }
 

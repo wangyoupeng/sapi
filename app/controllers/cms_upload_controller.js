@@ -1,9 +1,10 @@
 const imageModel = require('../models/image_model');
 const fs = require('fs');
 const multer = require('koa-multer');
+const logger = require('../libs/logger')
 
 async function uploadImg(ctx){
-  console.log("--------------- 000 -----------------")
+  logger.log("--------------- 000 -----------------")
   // 定义存储配置
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -24,7 +25,7 @@ async function uploadImg(ctx){
       ctx.body = '文件上传成功';
     }
   }
-  console.log(" ctx.req.file ::::: ",  ctx.req.file )
+  logger.log(" ctx.req.file ::::: ",  ctx.req.file )
   ctx.body = {
     code: 0,
     message: "上传成功",

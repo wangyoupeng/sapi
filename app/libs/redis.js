@@ -1,11 +1,12 @@
 
 const redis = require('ioredis');
 const config = require('config');
+const logger = require('./logger')
 
 
 const opt = { ...config.redis };
 
-console.log('init_redis_connected: ', JSON.stringify(opt));
+logger.log('init_redis_connected: ', JSON.stringify(opt));
 
 const client = redis.createClient(opt);
 

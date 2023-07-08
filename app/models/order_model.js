@@ -6,6 +6,7 @@ const db = require('./db.js');
 const TableName = "orders"
 const TableNameOrderItems = "order_items"
 const GoodsModel = require("./goods_model")
+const logger = require('../libs/logger')
 
 // 生成不重复的订单号
 function generateOrderNumber() {
@@ -76,7 +77,7 @@ module.exports = {
     let orderItemSql = `select order_id, amount, goods_name from ${TableNameOrderItems} where is_del=0 and order_id in ( ${ placeholdersList.join(', ') } ) `;
     let itemList = await db.query(orderItemSql,orderIdList);
     let orderIdOrderItemMap = {}
-    // console.log('---------', typeof itemList, itemList)
+    // logger.log('---------', typeof itemList, itemList)
     for(let i of itemList){
       if(orderIdOrderItemMap[i.order_id]){
         orderIdOrderItemMap[i.order_id].push({
@@ -96,7 +97,7 @@ module.exports = {
       return {...{orderItems}, ...item, ...{created_at: moment(item.created_at).format("YYYY-MM-DD HH:mm:ss"), updated_at: moment(item.updated_at)}}
     })
 
-    // console.log('--------- 2222:', JSON.stringify(newList))
+    // logger.log('--------- 2222:', JSON.stringify(newList))
 
     return {list: newList , count}
   },

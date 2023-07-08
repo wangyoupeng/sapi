@@ -4,14 +4,14 @@ const KoaStatic = require('koa-static');
 const KoaBody = require('koa-body');
 const checkJwt = require('./app/middleware/jwt');
 const config = require('config');
-const log4js = require('log4js');
+const logger = require('./app/libs/logger')
 
 
 let app = new Koa();
 
 // 处理异常
 const catchError = require('./app/middleware/error');
-// app.use(catchError());
+app.use(catchError());
 
 // 全局api log
 const toplog = require('./app/middleware/toplog');
@@ -35,7 +35,7 @@ app.use(KoaStatic(path.resolve('./public')));
 
 // // 限流 三方
 // const rateLimit = require('./app/middleware/rateLimit');
-// app.use(rateLimit)
+// app.use(s)
 
 // 添加令牌桶限流中间件
 const rateLimitMy = require('./app/middleware/rateLimitMy');
@@ -65,5 +65,5 @@ const cmsApis = require('./app/routers/cmsapis.js');
 app.use(cmsApis());
 
 app.listen(config.app.port, () => {
-  console.log(`server start at env: ${ config.app.env }  port: ${ config.app.port }`);
+  logger.log(`server start at env: ${ config.app.env }  port: ${ config.app.port }`);
 });

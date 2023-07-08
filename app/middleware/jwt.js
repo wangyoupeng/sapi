@@ -1,11 +1,12 @@
 const jwt = require('../libs/jwt');
 const { sendApiResult } = require('../libs/util');
+const logger = require('../libs/logger');
 
 const authJwtMiddleware = async(ctx, next) => {
   const authorizationHeader = ctx.headers['authorization'];
-  // console.log("--------------auth 000 authorizationHeader :::", authorizationHeader)
+  // logger.log("--------------auth 000 authorizationHeader :::", authorizationHeader)
   const token = authorizationHeader ? authorizationHeader.split(' ')[1] : null;
-  // console.log('--------------auth 111: ', token)
+  // logger.log('--------------auth 111: ', token)
   if (token) {
     const decoded = jwt.verifyToken(token);
     if (decoded) {

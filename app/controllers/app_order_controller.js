@@ -3,6 +3,7 @@ const { sendApiResult } = require('../libs/util');
 const orderModel = require('../models/order_model');
 const cartModel = require('../models/cart_model');
 const goodsModel = require('../models/goods_model');
+const logger = require('../libs/logger')
 // user_id 从前端携带的 token（jwt）中获取，放到验证中间件添加到ctx中
 // 如果没有登陆，返回未登陆， 页面提示登陆；
 // 接口内从ctx中获取 urer_id
@@ -11,7 +12,7 @@ const user_id = 10000
 
 
 async function OrderNew (ctx){
-  console.log("------- 000000 ordernew ---- ::",ctx.request.body)
+  logger.log("------- 000000 ordernew ---- ::",ctx.request.body)
   // {
   //   list: [ { goods_id: 10001, amount: 3 }, { goods_id: 10002, amount: 2 } ],
   //   user_id: 10000

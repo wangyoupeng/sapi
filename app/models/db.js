@@ -3,12 +3,13 @@
  */
 var mysql = require('mysql');
 var config = require('config');
+const logger = require('../libs/logger')
 
 var pool = mysql.createPool(config.mysql);
-console.log('init_mysql_connected', config.mysql.host);
+logger.log('init_mysql_connected', config.mysql.host);
 
 function query(sql, params) {
-  console.log("======== db query sql========:::", sql)
+  logger.log("======== db query sql========:::", sql)
 
   return new Promise((resolve, reject) => {
     // 取出链接
@@ -20,7 +21,7 @@ function query(sql, params) {
       }
 
       connection.query(sql, params, function (error, results, fields) {
-        console.log(`${ sql }=>${ params }`);
+        logger.log(`${ sql }=>${ params }`);
         // 释放连接
         connection.release();
         if (error) {

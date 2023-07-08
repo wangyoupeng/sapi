@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const logger = require('./logger')
 
 // 密钥，用于解析验证 JWT
 const secretKey = 'secret_key_8w_wyp';
@@ -12,7 +13,7 @@ const verifyToken = (token) => {
     const decoded = jwt.verify(token, secretKey);
     return decoded;
   } catch (error) {
-    console.log("verifyToken error ,token 过期了 .. ");
+    logger.log("verifyToken error ,token 过期了 .. ");
     return null;
   }
 };

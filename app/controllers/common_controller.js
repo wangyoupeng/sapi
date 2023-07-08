@@ -1,6 +1,7 @@
 const jwt = require('../libs/jwt');
 const { sendApiResult } = require('../libs/util');
 const usersModel = require('../models/users_model');
+const logger = require('../libs/logger')
 
 async function login( ctx ){
   const { username, pwd } = ctx.request.body;
@@ -15,9 +16,9 @@ async function login( ctx ){
   
   let uItem  = list[0]
   //验证密码
-  console.log("-----11----: ",pwd, uItem.pwd, uItem.salt)
+  logger.log("-----11----: ",pwd, uItem.pwd, uItem.salt)
   let isPwdOk = usersModel.authUser(pwd, uItem.pwd, uItem.salt)
-  console.log("-----66----: ",pwd, uItem.pwd, uItem.salt)
+  logger.log("-----66----: ",pwd, uItem.pwd, uItem.salt)
   if(!isPwdOk){
     sendApiResult(ctx, { data: {}, code : 200, message: "用户/名密码错误"})
     return false;
@@ -34,7 +35,7 @@ async function login( ctx ){
 
 async function regist( ctx ){
   const { username, password, email } = ctx.request.body;
-  console.log("======== 11")
+  logger.log("======== 11")
   // 根据用户提供的用户名和密码进行验证 数据库查询 users
   let list = await usersModel.FindUserName(username)
   if(list.length > 0){
@@ -43,7 +44,7 @@ async function regist( ctx ){
   }
   // insert user
   let insertRes = await usersModel.Create(username, password, email)
-  console.log("-------- createuser insertRes : ", insertRes)
+  logger.log("-------- createuser insertRes : ", insertRes)
   sendApiResult(ctx, {data: {}, message: 'ok'})
 }
 

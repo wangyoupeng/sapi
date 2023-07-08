@@ -1,5 +1,6 @@
 
 const { sendApiResult } = require('../libs/util');
+const logger = require('../libs/logger')
 const cartModel = require('../models/cart_model');
 // const productDao = require('../models/productModel');
 
@@ -11,7 +12,6 @@ const user_id = 10000
 
 module.exports = {
   AddCart: async ctx => {
-    console.log()
     let { goods_id, amount } = ctx.request.body;
     let findRes = await cartModel.Find({user_id, goods_id});
     if(findRes.length == 0){
@@ -43,7 +43,7 @@ module.exports = {
   ListCart: async ctx => {
     // 获取所有收藏信息
     const resList = await cartModel.List({user_id});
-    // console.log("--------111-::::", resList)
+    // logger.log("--------111-::::", resList)
     let rList = resList.map(item => {
       return {
         id: item.goods_id,
