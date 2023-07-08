@@ -11,7 +11,8 @@ let app = new Koa();
 
 // 处理异常
 // const catchError = require('./app/middleware/error');
-// app.use(catchError());
+// app.use(catchError()); // 有点儿问题 tofix
+
 
 // 全局api log
 const toplog = require('./app/middleware/toplog');
