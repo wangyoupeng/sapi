@@ -10,8 +10,8 @@ const logger = require('./app/libs/logger')
 let app = new Koa();
 
 // 处理异常
-const catchError = require('./app/middleware/error');
-app.use(catchError());
+// const catchError = require('./app/middleware/error');
+// app.use(catchError());
 
 // 全局api log
 const toplog = require('./app/middleware/toplog');
