@@ -17,5 +17,9 @@
   "redis": {
     "host": "127.0.0.1",
     "port": 6379
+  },
+  "ratelimit":{
+    "limit": 1000,
+    "interval": 1000
   }
 }

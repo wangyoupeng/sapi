@@ -1,13 +1,8 @@
 // const {set, get, setWithExpiration} = require("../libs/redis")
 const redis = require("../libs/redis.js")
-
-const conf = {
-  limit: 10,
-  interval: 10000
-}
+const {ratelimit} = require("config")
+const { limit, interval } = ratelimit
 module.exports = () => {
-  let limit = conf.limit;
-  let interval = conf.interval;
   return async (ctx, next) => {
     const key = `ratelimit`;
 
