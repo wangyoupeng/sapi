@@ -2,9 +2,27 @@ const imageModel = require('../models/image_model');
 const fs = require('fs');
 const multer = require('koa-multer');
 const logger = require('../libs/logger')
-
+const { put, viewImage } = require('../libs/alioss');
+const { sendApiResult } = require('../libs/util');
+async function showImages(ctx){
+  let { imgpath } = ctx.params
+  // ctx.status = 302;
+  let url = viewImage(`/images/${imgpath}`)
+  ctx.redirect(url);
+}
+async function uploadImage(ctx){
+  const file = ctx.request.files.file;
+  const name = file.name;
+  const resultUrl = await put({fileName: name, filePath: file.path});
+  ctx.body = {
+    code: 0,
+    message: "上传成功",
+    data: {
+      url: resultUrl
+    }
+  };
+}
 async function uploadImg(ctx){
-  logger.log("--------------- 000 -----------------")
   // 定义存储配置
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -36,4 +54,6 @@ async function uploadImg(ctx){
 }
 module.exports = {
   uploadImg,
+  uploadImage,
+  showImages,
 }

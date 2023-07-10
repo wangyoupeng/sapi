@@ -21,5 +21,11 @@
   "ratelimit":{
     "limit": 1000,
     "interval": 1000
+  },
+  "alioss":{
+    "region": "oss-cn-beijing",
+    "accessKeyId": "LTAI5tLLvaZfxCJjp2VnKwBN",
+    "accessKeySecret": "LhNFkxMN7nCqdtYh5TzyxwjVDfSjWu",
+    "bucket": "bawei-wyp"
   }
 }

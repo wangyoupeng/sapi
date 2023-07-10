@@ -32,7 +32,7 @@ const rewriteUrl = require('./app/middleware/rewriteUrl');
 app.use(rewriteUrl);
 
 // // 使用koa-static处理静态资源
-app.use(KoaStatic(path.resolve('./public')));
+// app.use(KoaStatic(path.resolve('./public')));
 
 // // 限流 三方
 // const rateLimit = require('./app/middleware/rateLimit');
@@ -42,7 +42,7 @@ app.use(KoaStatic(path.resolve('./public')));
 const rateLimitMy = require('./app/middleware/rateLimitMy');
 app.use(rateLimitMy()); // 10个请求/10秒
 
-// const cacheMiddlware = require("./app/middleware/cache");
+const cacheMiddlware = require("./app/middleware/cache");
 // app.use(cacheMiddlware)
 
 
