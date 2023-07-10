@@ -5,7 +5,6 @@ const logger = require('../libs/logger')
 
 async function login( ctx ){
   const { username, pwd } = ctx.request.body;
-  
   // 根据用户提供的用户名和密码进行验证 数据库查询 users
   //
   let list = await usersModel.FindByName(username)
@@ -13,7 +12,6 @@ async function login( ctx ){
     sendApiResult(ctx, { data: {}, code : 200, message: "用户不存在"})
     return false;
   }
-  
   let uItem  = list[0]
   //验证密码
   logger.log("-----11----: ",pwd, uItem.pwd, uItem.salt)
