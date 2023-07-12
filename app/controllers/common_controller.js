@@ -33,7 +33,6 @@ async function login( ctx ){
 
 async function regist( ctx ){
   const { username, password, email } = ctx.request.body;
-  logger.log("======== 11")
   // 根据用户提供的用户名和密码进行验证 数据库查询 users
   let list = await usersModel.FindUserName(username)
   if(list.length > 0){
