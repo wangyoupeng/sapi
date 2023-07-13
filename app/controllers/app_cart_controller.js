@@ -2,6 +2,7 @@
 const { sendApiResult } = require('../libs/util');
 const logger = require('../libs/logger')
 const cartModel = require('../models/cart_model');
+const goodsModel = require('../models/goods_model');
 // const productDao = require('../models/productModel');
 
 // user_id 从前端携带的 token（jwt）中获取，放到验证中间件添加到ctx中
@@ -43,13 +44,17 @@ module.exports = {
   ListCart: async ctx => {
     // 获取所有收藏信息
     const resList = await cartModel.List({user_id});
-    // logger.log("--------111-::::", resList)
+    let goodsList = await goodsModel.ListByIds(resList.map(i=>i.goods_id))
+    let goodsMap = {}
+    for( let i of goodsList){
+      goodsMap[i.id] = i
+    }
     let rList = resList.map(item => {
       return {
         id: item.goods_id,
         name: item.name,
         amount: item.amount,
-        imageUrl : item.image_url,
+        imageUrl : goodsMap[item.goods_id]?.image_url,
         price: item.price
       }
     })
