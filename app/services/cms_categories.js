@@ -37,7 +37,7 @@ async function list({ filterText, pageSize = 10, currentPage = 1 }){
       stock: item.stock
     }
   })
-  return {data: { list: rList, total: count[0].total }}
+  return { list: rList, total: count[0].total }
 }
 
 module.exports = {

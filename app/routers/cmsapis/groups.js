@@ -1,10 +1,10 @@
 
-const cmsGoodsController = require('../../controllers/cms_goods_controller')
+const controller = require('../../controllers/cms_groups_controller')
 
 module.exports = ( router ) => {
   router
-    // .post('/groups/add', cmsGoodsController.add)
-    // .get('/groups', cmsGoodsController.list)
-    // .post('/groups/edit', cmsGoodsController.updateById)
-    // .post('/groups/delete', cmsGoodsController.removeById)
+    .post('/groups/add', controller.add)
+    .get('/groups', controller.list)
+    // .post('/groups/edit', controller.updateById)
+    // .post('/groups/delete', controller.removeById)
 }

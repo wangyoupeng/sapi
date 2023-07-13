@@ -1,6 +1,6 @@
 
 const db = require('./db.js');
-const TableName = "groups"
+const TableName = "`groups`"
 
 module.exports = {
   Lock: async () => {

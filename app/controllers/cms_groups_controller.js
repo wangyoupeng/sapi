@@ -1,5 +1,5 @@
 
-const services = require('../services/cms_categories');
+const services = require('../services/cms_groups');
 const { sendApiResult } = require('../libs/util');
 const logger = require('../libs/logger')
 
@@ -13,20 +13,18 @@ async function add(ctx){
 }
 async function removeById(ctx){ // 软删除
   // 参数校验 TODO
-  let categoriesId = ctx.request.body.categories_id
-  logger.log("aaaaaaaa :", categoriesId)
-  let res = await services.removeById(categoriesId)
-  
+  let groupsId = ctx.request.body.groups_id
+  let res = await services.removeById(groupsId)
   sendApiResult(ctx, {})
 }
 async function updateById(ctx){
   // 参数校验 TODO
-  let categoriesId = ctx.request.body.id
+  let groupsId = ctx.request.body.id
   let itemInfo = {}
   let params = ctx.request.body
   if(params.hasOwnProperty("name")) itemInfo.name = params.name
   if(params.hasOwnProperty("description")) itemInfo.description = params.description
-  let res = await services.updateById(categoriesId, itemInfo)
+  let res = await services.updateById(groupsId, itemInfo)
   sendApiResult(ctx, {})
 }
 async function list(ctx){
