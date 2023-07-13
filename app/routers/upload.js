@@ -8,7 +8,7 @@ const uploadController = require('../controllers/cms_upload_controller.js')
 function uploadRouter(router) {
   router
     .post('/upload/image', uploadController.uploadImage) // 上传到 ali-oss
-    .post('/upload/img', uploadController.uploadImage) // 上传到本地
+    .post('/upload/img', uploadController.uploadImage) // 上传到本地 uploadImg
     .get('/images/:imgpath', uploadController.showImages) // 查看图片
 }
 

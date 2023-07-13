@@ -1,9 +1,6 @@
-/*
- * @Description: 商品模块数据持久层
- */
-// 拟废弃
+
 const db = require('./db.js');
-const TableName = "skus"
+const TableName = "categories"
 
 module.exports = {
   Lock: async () => {
@@ -14,25 +11,22 @@ module.exports = {
     let sql = `UNLOCK ${TableName}`;
     return await db.query(sql, []);
   },
-  LockRows: async(goodsIds) => {
+  LockRows: async(ids) => {
     const placeholdersList = []
-    goodsIds.map((i) => {
+    ids.map((i) => {
       placeholdersList.push('?')
       return i.id
     })
     let sql = `SELECT * FROM ${TableName} WHERE id in (${placeholdersList.toString()}) FOR UPDATE`;
-    return await db.query(sql, [...goodsIds]);
+    return await db.query(sql, [...ids]);
   },
   Add: async (itemInfo) => {
     const sql = `insert into ${TableName} 
-      (name, description, image_url, price, stock) 
-      values(?,?,?,?,?)`;
+      (name, description) 
+      values(?,?)`;
     return await db.query(sql, [
       itemInfo.name,
       itemInfo.description || "",
-      itemInfo.imageUrl || "",
-      itemInfo.price ? parseInt(itemInfo.price) : 0,
-      itemInfo.stock ? parseInt(itemInfo.stock) : 0,
     ]);
   },
   DeleteById: async (id) => {
@@ -43,7 +37,6 @@ module.exports = {
     const sql = `update ${TableName} SET is_del = 1 where id=?`;
     return await db.query(sql, [id]);
   },
-  // 连接数据库,获取用户的所有收藏商品信息
   List: async ({ filterText, pageSize = 10, currentPage = 1}) => {
     // search
     let sql = `select * from ${TableName} where is_del=0 `;
@@ -55,15 +48,11 @@ module.exports = {
     let countSql = `select count(*) as total from ${TableName} where is_del=0`
     if(filterText) countSql += ` and name like "%${ filterText }%"`
     let count = await db.query(countSql)
-    // return res
     return {list, count}
   },
-  // 连接数据库,获取用户的某个收藏商品信息
   UpdateById: async (id, updateInfo) => {
     let setStr = ""
     let paramsList = []
-    if(updateInfo.stock) updateInfo.stock = parseInt(updateInfo.stock)
-    if(updateInfo.price) updateInfo.price = parseInt(updateInfo.price * 100)
     for(let k in updateInfo){
       setStr += `, ${k}=? `
       paramsList.push(updateInfo[k])
@@ -71,15 +60,6 @@ module.exports = {
     paramsList.push(id)
     const sql = `update ${TableName} set is_del=0 ${setStr} where id=?`;
     return await db.query(sql, paramsList);
-  },
-  StockCutById: async (id, amount) => {
-    let sql = `UPDATE ${TableName} SET stock = stock - ? WHERE id = ?;`
-    return await db.query(sql, [amount, id]);
-  },
-  ListByIds: async (idList) => {
-    const placeholders = idList.map(() => '?').join(', ');
-    let sql = `select * from ${TableName} where is_del=0 and id in ( ${ placeholders } ) `;
-    return await db.query(sql,idList);
   },
   
 }
