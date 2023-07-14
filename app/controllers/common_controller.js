@@ -52,8 +52,7 @@ async function refreshtoken( ctx ){
       token: tokenObj.token,
       tokenExp: tokenObj.exp,
       refreshToken: refreshTokenObj.token,
-      refreshTokenExp: refreshTokenObj.exp,
-      userInfo
+      refreshTokenExp: refreshTokenObj.exp
     }})
   } else {
     return sendApiResult(ctx, {code: 400, message:"无效的refreshtoken" })

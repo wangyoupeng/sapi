@@ -4,6 +4,7 @@ const logger = require('../libs/logger');
 
 const whiteList = [
   "GET_/appapi/goods",
+  "GET_/appapi/groups",
 ]
 
 const authJwtMiddleware = async(ctx, next) => {
@@ -11,10 +12,7 @@ const authJwtMiddleware = async(ctx, next) => {
     await next();
   } else {
     const authorizationHeader = ctx.headers['authorization'];
-    // console.log('----- aaaaaaa ctx.path: ',  `${ctx.method}_${ctx.path}`) // GET_/appapi/cart/list
-    // logger.log("--------------auth 000 authorizationHeader :::", authorizationHeader)
     const token = authorizationHeader ? authorizationHeader.split(' ')[1] : null;
-    // logger.log('--------------auth 111: ', token)
     if (token) {
       const decoded = jwt.verifyToken(token);
       if (decoded) {
