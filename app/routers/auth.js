@@ -1,17 +1,18 @@
 
 let Router = require('koa-router');
 let compose = require('koa-compose')
+let decrypPwdMiddware = require('../middleware/decrypPwd')
 
 const commonController = require('../controllers/common_controller.js')
 
 function localAuth(router) {
   router
     // Web 应用用户登录
-    .post('/login', commonController.login)
+    .post('/login', decrypPwdMiddware, commonController.login)
+    .post('/refresh/token', commonController.refreshtoken)
     .post('/regist', commonController.regist)
-    // Web 应用用户登出
     .get('/signout', async (ctx) => {
-      // todo
+      // 令牌黑名单(redis) 实现 TODO
     });
 }
 

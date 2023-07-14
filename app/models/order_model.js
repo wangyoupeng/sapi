@@ -58,9 +58,9 @@ module.exports = {
   },
   
   // 连接数据库,获取用户的所有收藏商品信息
-  List: async ({ filterText, pageSize = 10, currentPage = 1}) => {
+  List: async ({ filterText, pageSize = 10, currentPage = 1, user_id}) => {
     // search
-    let sql = `select * from ${TableName} where is_del=0 `;
+    let sql = `select * from ${TableName} where is_del=0 and user_id = ${user_id} `;
     sql += ` ORDER BY id DESC`
     sql += ` limit ${pageSize} offset ${currentPage * pageSize - pageSize}`
     let list = await await db.query(sql);

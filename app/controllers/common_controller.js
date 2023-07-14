@@ -3,6 +3,7 @@ const { sendApiResult } = require('../libs/util');
 const usersModel = require('../models/users_model');
 const logger = require('../libs/logger')
 
+
 async function login( ctx ){
   const { username, pwd } = ctx.request.body;
   // 根据用户提供的用户名和密码进行验证 数据库查询 users
@@ -27,8 +28,36 @@ async function login( ctx ){
   }
   // 如果验证成功，则创建 JWT 并发送响应
   const payload = { ...userInfo};
-  const token = jwt.generateToken(payload);
-  sendApiResult(ctx, {data: { token, userInfo }})
+  const tokenObj= jwt.generateToken(payload);
+  const refreshTokenObj = jwt.generateRefreshToken(payload);
+  sendApiResult(ctx, {data: {
+    token: tokenObj.token,
+    tokenExp: tokenObj.exp,
+    refreshToken: refreshTokenObj.token,
+    refreshTokenExp: refreshTokenObj.exp,
+    userInfo
+  }})
+}
+
+async function refreshtoken( ctx ){
+  const { refreshtoken } = ctx.request.body;
+  let decoded = jwt.verifyToken(refreshtoken)
+  if (decoded) {
+    // ctx.state.user = decoded;
+    // 新的token refreshtoken(如果临期)
+    let payload = {userId:decoded.userId, userName: decoded.userName}
+    const tokenObj = jwt.generateToken(payload);
+    const refreshTokenObj = jwt.generateRefreshToken(payload);
+    sendApiResult(ctx, {data: {
+      token: tokenObj.token,
+      tokenExp: tokenObj.exp,
+      refreshToken: refreshTokenObj.token,
+      refreshTokenExp: refreshTokenObj.exp,
+      userInfo
+    }})
+  } else {
+    return sendApiResult(ctx, {code: 400, message:"无效的refreshtoken" })
+  }
 }
 
 async function regist( ctx ){
@@ -48,4 +77,5 @@ async function regist( ctx ){
 module.exports = {
   login,
   regist,
+  refreshtoken,
 }
