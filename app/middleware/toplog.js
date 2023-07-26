@@ -1,6 +1,5 @@
 const moment = require('moment')
 const logger = require("../libs/logger.js")
-logger.log("--- logger :::", logger)
 
 
 // 写入文件用 log4js 包来实现logger

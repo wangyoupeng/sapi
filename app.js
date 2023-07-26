@@ -9,6 +9,11 @@ const logger = require('./app/libs/logger')
 
 let app = new Koa();
 
+const cors = require('koa2-cors');
+app.use(cors({
+  origin: '*'
+}));
+
 // 处理异常
 const catchError = require('./app/middleware/error');
 app.use(catchError()); 
@@ -18,9 +23,7 @@ app.use(catchError());
 const toplog = require('./app/middleware/toplog');
 app.use(toplog);
 
-
-
-// // 处理请求体数据
+// 处理请求体数据
 const koaBodyConfig = require('./app/middleware/koaBodyConfig');
 app.use(KoaBody(koaBodyConfig,{}));
 
@@ -32,7 +35,7 @@ const rewriteUrl = require('./app/middleware/rewriteUrl');
 app.use(rewriteUrl);
 
 // // 使用koa-static处理静态资源
-// app.use(KoaStatic(path.resolve('./public')));
+app.use(KoaStatic(path.resolve('./public')));
 
 // // 限流 三方
 // const rateLimit = require('./app/middleware/rateLimit');
@@ -42,14 +45,13 @@ app.use(rewriteUrl);
 // const rateLimitMy = require('./app/middleware/rateLimitMy');
 // app.use(rateLimitMy()); // 10个请求/10秒
 
-const cacheMiddlware = require("./app/middleware/cache");
-// app.use(cacheMiddlware)
+// const cacheMiddlware = require("./app/middleware/cache");
+// app.use(cacheMiddlware) // 已单独注册到 /goods 路由 不再全局注册
 
 
-// // 图片处理
+// // 图片处理 alioss
 const uploadApi = require('./app/routers/upload.js');
 app.use(uploadApi())
-
 
 
 // login 路由注册

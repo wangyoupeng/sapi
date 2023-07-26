@@ -7,5 +7,6 @@ const cacheMiddlware = require("../../middleware/cache");
 module.exports =(router) => {
   router
     .get('/goods', appGoodsController.list)
+    // .get('/goods', appGoodsController.listSpus)
     .get('/groups', appGroupsController.list)
 }
