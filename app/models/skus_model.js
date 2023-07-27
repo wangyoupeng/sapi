@@ -25,6 +25,14 @@ module.exports = {
     const sql = `update ${TableName} SET is_del = 1 where id=?`;
     return await db.query(sql, [id]);
   },
+  ListBySpuId: async (spu_id) => {
+    // search
+    let sql = `select * from ${TableName} where is_del=0 `;
+    sql += ` and spu_id = "${ spu_id }"`
+    sql += ` ORDER BY price DESC`
+    let list = await db.query(sql);
+    return {list}
+  },
   // 连接数据库,获取用户的所有收藏商品信息
   List: async ({ filterText, pageSize = 10, currentPage = 1}) => {
     // search
