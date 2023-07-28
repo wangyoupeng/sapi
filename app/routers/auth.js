@@ -11,9 +11,6 @@ function localAuth(router) {
     .post('/login', decrypPwdMiddware, commonController.login)
     .post('/refresh/token', commonController.refreshtoken)
     .post('/regist', commonController.regist)
-    .get('/signout', async (ctx) => {
-      // 令牌黑名单(redis) 实现 TODO
-    });
 }
 
 function auth() {

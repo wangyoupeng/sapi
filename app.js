@@ -38,12 +38,8 @@ app.use(rewriteUrl);
 app.use(KoaStatic(path.resolve('./public')));
 
 // // 限流 三方
-// const rateLimit = require('./app/middleware/rateLimit');
-// app.use(rateLimit)
-
-// 添加令牌桶限流中间件
-// const rateLimitMy = require('./app/middleware/rateLimitMy');
-// app.use(rateLimitMy()); // 10个请求/10秒
+const rateLimit = require('./app/middleware/rateLimit');
+app.use(rateLimit)
 
 // const cacheMiddlware = require("./app/middleware/cache");
 // app.use(cacheMiddlware) // 已单独注册到 /goods 路由 不再全局注册

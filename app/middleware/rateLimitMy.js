@@ -1,8 +1,15 @@
 // const {set, get, setWithExpiration} = require("../libs/redis")
 const redis = require("../libs/redis.js")
-const {ratelimit} = require("config")
-const { limit, interval } = ratelimit
-module.exports = () => {
+let { limit, interval } = require("config")
+/**
+ * 
+ * @param {*} lim 自定义限制次数 默认走config
+ * @param {*} inter 自定义时间长度 单位 ms 默认走config
+ * @returns 
+ */
+module.exports = (lim, inter) => {
+  if(lim) limit = lim
+  if(inter) interval = inter
   return async (ctx, next) => {
     const key = `ratelimit`;
 
@@ -23,14 +30,15 @@ module.exports = () => {
       // let nextInterval = interval;
       if(now >= countTimestamp){
         // 请求通过，重置
-        remaining = Math.max(0, limit - 1);
+        remaining = Math.max(0, limit - 1)
         countTimestamp = now + interval;
       } else {
-        remaining -= 1
+        remaining = remaining - 1
       }
       // 在 Redis 中存储更新的令牌桶数据
+      console.log('---222---')
       redis.setWithExpiration(key, `${countTimestamp}_${remaining}`, parseInt(interval / 1000));
-
+      console.log('---999---')
       // 添加响应头信息，用于显示令牌桶状态
       ctx.set('X-RateLimit-Limit', limit);
       ctx.set('X-RateLimit-Remaining', remaining);

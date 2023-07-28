@@ -5,6 +5,6 @@ module.exports = ( router ) => {
   router
     .post('/goods/add', cmsGoodsController.add)
     .get('/goods', cmsGoodsController.list)
-    .post('/goods/edit', cmsGoodsController.updateById)
-    .post('/goods/delete', cmsGoodsController.removeById)
+    .put('/goods/edit', cmsGoodsController.updateById)
+    .delete('/goods/delete', cmsGoodsController.removeById)
 }

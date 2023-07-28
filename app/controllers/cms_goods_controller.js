@@ -23,7 +23,7 @@ async function deleteById(ctx){ // 硬删除 慎用
 }
 async function removeById(ctx){ // 软删除
   // 参数校验 TODO
-  let goodsId = ctx.request.body.goods_id
+  let goodsId = ctx.query.goods_id
   logger.log("aaaaaaaa :", goodsId)
   let resModel = await goodsModel.RemoveById(goodsId)
   
@@ -43,14 +43,11 @@ async function updateById(ctx){
   sendApiResult(ctx, {})
 }
 async function list(ctx){
-  // logger.log("111")
   const { filterText, pageSize = 10, currentPage = 1 } = ctx.query;
   // 参数校验 TODO
   let params = { pageSize,currentPage }
   if(filterText) params.filterText = filterText
-  // logger.log("7777")
   let {list, count} = await goodsModel.List(params)
-  // logger.log("88888")
   let rList = list.map(item => {
     return {
       id: item.id,

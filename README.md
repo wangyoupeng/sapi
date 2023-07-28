@@ -4,9 +4,9 @@
 ## 运行项目
 
 ```
-第一步： 用 /sql/store_db_struct_data.sql 初始化mysql 数据库
+step1： 用 /sql/store_db_struct_data.sql 初始化mysql 数据库
 
-第二部：npm install
+step2：npm install
 
-第三部：npm start
+step3：npm start
 ```

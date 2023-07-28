@@ -74,8 +74,7 @@ module.exports = {
       setStr += `, ${k}=? `
       paramsList.push(updateInfo[k])
     }
-    paramsList.push(id)
-    const sql = `update ${TableName} set is_del=0 ${setStr} where id=?`;
+    const sql = `update ${TableName} set is_del=${parseInt(0)} ${setStr} where id=${id} `;
     return await db.query(sql, paramsList);
   },
   StockCutById: async (id, amount) => {
