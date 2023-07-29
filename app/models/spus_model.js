@@ -51,7 +51,7 @@ module.exports = {
     }
     let count = await db.query(countSql)
     // return res
-    return {list, count}
+    return {list, total: count[0].total}
   },
   // 连接数据库,获取用户的某个收藏商品信息
   UpdateById: async (id, updateInfo) => {

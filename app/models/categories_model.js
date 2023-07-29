@@ -48,7 +48,7 @@ module.exports = {
     let countSql = `select count(*) as total from ${TableName} where is_del=0`
     if(filterText) countSql += ` and name like "%${ filterText }%"`
     let count = await db.query(countSql)
-    return {list, count}
+    return {list, total: count[0].total}
   },
   UpdateById: async (id, updateInfo) => {
     let setStr = ""

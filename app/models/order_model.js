@@ -99,7 +99,7 @@ module.exports = {
 
     // logger.log('--------- 2222:', JSON.stringify(newList))
 
-    return {list: newList , count}
+    return {list: newList , total: count[0].total}
   },
   
 }

@@ -8,10 +8,10 @@ async function OrderList(ctx){
   let user_id = ctx.state.user.userId
   let params = { pageSize,currentPage, user_id }
   if(filterText) params.filterText = filterText
-  let {list, count} = await orderModel.List(params)
+  let {list, total} = await orderModel.List(params)
   
 
-  sendApiResult(ctx, {data: { list, total: count[0].total }})
+  sendApiResult(ctx, {data: { list, total }})
 }
 
 module.exports = {

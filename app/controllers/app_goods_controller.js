@@ -25,7 +25,7 @@ async function list(ctx){
       params.idList = [11]
     }
   }
-  let {list, count} = await goodsModel.List(params)
+  let {list, total} = await goodsModel.List(params)
   let rList = list.map(item => {
     return {
       id: item.id,
@@ -36,7 +36,7 @@ async function list(ctx){
       stock: item.stock
     }
   })
-  sendApiResult(ctx, {data: { list: rList, total: count[0].total }})
+  sendApiResult(ctx, {data: { list: rList, total }})
 }
 async function listSpus(ctx){
   const { filterText,group, pageSize = 5, currentPage = 1 } = ctx.query;
@@ -54,7 +54,7 @@ async function listSpus(ctx){
       params.idList = [11]
     }
   }
-  let {list, count} = await spuModel.List(params)
+  let {list, total} = await spuModel.List(params)
   let rList = list.map(item => {
     return {
       id: item.id,
@@ -65,7 +65,7 @@ async function listSpus(ctx){
       stock: item.stock
     }
   })
-  sendApiResult(ctx, {data: { list: rList, total: count[0].total }})
+  sendApiResult(ctx, {data: { list: rList, total }})
 }
 
 async function spuDetail(ctx){

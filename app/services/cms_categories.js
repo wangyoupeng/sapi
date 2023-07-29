@@ -26,7 +26,7 @@ async function updateById(itemInfo){
 async function list({ filterText, pageSize = 10, currentPage = 1 }){
   let params = { pageSize,currentPage }
   if(filterText) params.filterText = filterText
-  let {list, count} = await categoriesModel.List(params)
+  let {list, total} = await categoriesModel.List(params)
   let rList = list.map(item => {
     return {
       id: item.id,
@@ -37,7 +37,7 @@ async function list({ filterText, pageSize = 10, currentPage = 1 }){
       stock: item.stock
     }
   })
-  return { list: rList, total: count[0].total }
+  return { list: rList, total }
 }
 
 module.exports = {

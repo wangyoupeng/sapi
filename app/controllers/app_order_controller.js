@@ -47,8 +47,8 @@ async function OrderList(ctx){
   // 参数校验 TODO
   let params = { pageSize,currentPage,user_id }
   if(filterText) params.filterText = filterText
-  let {list, count} = await orderModel.List(params)
-  sendApiResult(ctx, {data: { list, total: count[0].total }})
+  let {list, total} = await orderModel.List(params)
+  sendApiResult(ctx, {data: { list, total }})
 }
 
 module.exports = {

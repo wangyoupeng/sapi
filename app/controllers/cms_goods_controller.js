@@ -47,7 +47,7 @@ async function list(ctx){
   // 参数校验 TODO
   let params = { pageSize,currentPage }
   if(filterText) params.filterText = filterText
-  let {list, count} = await goodsModel.List(params)
+  let {list, total} = await goodsModel.List(params)
   let rList = list.map(item => {
     return {
       id: item.id,
@@ -58,7 +58,7 @@ async function list(ctx){
       stock: item.stock
     }
   })
-  sendApiResult(ctx, {data: { list: rList, total: count[0].total }})
+  sendApiResult(ctx, {data: { list: rList, total }})
 }
 
 module.exports = {
