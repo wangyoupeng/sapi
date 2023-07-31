@@ -1,6 +1,7 @@
 // const {set, get, setWithExpiration} = require("../libs/redis")
 const redis = require("../libs/redis.js")
-let { limit, interval } = require("config").ratelimit
+// let { limit, interval } = require("config").ratelimit
+let ratelimit = require("config").ratelimit
 const { sendApiResult } = require('../libs/util');
 /**
  * 
@@ -8,12 +9,14 @@ const { sendApiResult } = require('../libs/util');
  * @param {*} inter 自定义时间长度 单位 ms 默认走config
  * @returns 
  */
-module.exports = (lim , inter) => {
-  if(lim) limit = lim
-  if(inter) interval = inter
+module.exports = (conf = {}) => {
+  let {limit , interval, key} = conf
+  if(!limit) limit = ratelimit.limit;
+  if(!interval) interval = ratelimit.interval;
+  key = `${'ratelimit'}${key}`;
   return async (ctx, next) => {
-    const key = `ratelimit`;
-
+    
+    console.log('---11--:',limit , interval, key)
   // 从 Redis 中获取令牌桶数据
     let cacheStr = await redis.get(key)
     if (!cacheStr) cacheStr = `0_${limit}`
