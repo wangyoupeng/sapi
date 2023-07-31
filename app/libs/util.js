@@ -5,7 +5,7 @@ const sendApiResult = (ctx, {data = {}, error, code, message = "ok"}) => {
     if(error.messsage) message = error.messsage
   }
   const status = code || (error ? 500 : 200);
-  // ctx.status = status;
+  if(code == 429) ctx.status = status;
   data.status = status
   data.message = message;
   ctx.body = data;
