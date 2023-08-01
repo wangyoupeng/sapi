@@ -1,9 +1,9 @@
 
 /**
- * pm2 start pm2.config.js && pm2 logs sapi // 默认启动development 环境
- * pm2 start pm2.config.js --env development
- * pm2 start pm2.config.js --env test
- * pm2 start pm2.config.js --env production
+ * pm2 start pm2.config.js -- env development && pm2 logs sapi // 默认启动development 环境
+ * pm2 start pm2.config.js --env development && pm2 logs
+ * pm2 start pm2.config.js -- env test
+ * pm2 start pm2.config.js -- env production
  */
 module.exports = {
   apps: [

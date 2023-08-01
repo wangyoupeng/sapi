@@ -10,15 +10,22 @@ const { sendApiResult } = require('../libs/util');
  * @returns 
  */
 module.exports = (conf = {}) => {
-  let {limit , interval, key} = conf
+  let {limit , interval, key = "", isAddUserId = false} = conf
   if(!limit) limit = ratelimit.limit;
   if(!interval) interval = ratelimit.interval;
-  key = `${'ratelimit'}${key}`;
+  
   return async (ctx, next) => {
+    let keyt = ""
+    // 配置参数处理
+    if(isAddUserId){
+      keyt = `${'ratelimit'}:${key}:${ctx.state.user?.userId || "1111"}`
+    } else {
+      keyt = `${'ratelimit'}:${key}`;
+    }
     
-    console.log('---11--:',limit , interval, key)
+    // console.log('---11--:',key, limit , interval)
   // 从 Redis 中获取令牌桶数据
-    let cacheStr = await redis.get(key)
+    let cacheStr = await redis.get(keyt)
     if (!cacheStr) cacheStr = `0_${limit}`
     let [countTimestampStr, buckets] = cacheStr.split('_')
 
@@ -43,8 +50,8 @@ module.exports = (conf = {}) => {
         remaining = remaining - 1
       }
       // 在 Redis 中存储更新的令牌桶数据
-      console.log('---222---',key, `${countTimestamp}_${remaining}`)
-      let ress = await redis.setWithExpiration(key, `${countTimestamp}_${remaining}`, parseInt(interval / 1000));
+      console.log(keyt, `${countTimestamp}_${remaining}`)
+      let ress = await redis.setWithExpiration(keyt, `${countTimestamp}_${remaining}`, parseInt(interval / 1000));
       // 添加响应头信息，用于显示令牌桶状态
       ctx.set('X-RateLimit-Limit', limit);
       ctx.set('X-RateLimit-Remaining', remaining);
