@@ -33,10 +33,10 @@ log4js.configure({
     }
   },
   categories: {
-    default:{ appenders: ['console', 'date_file'], level:'info' },
+    default:{ appenders: ['console', 'date_file'], level:'debug' },
     production:{ appenders: ['console', 'date_file'], level:'info' }, // 生产环境 log类型 只输出到按日期命名的文件
     console:{ appenders:['console','date_file'], level:'debug' }, // 开发环境  输出到控制台
-    debug:{ appenders:['console', 'date_file'], level:'info' }, // 等同生产，实际开发环境可以不输出到 date_file
+    debug:{ appenders:['console', 'date_file'], level:'debug' }, // 等同生产，实际开发环境可以不输出到 date_file
     error_log:{ appenders:['console', 'error_file'], level:'error' }
   }
 });

@@ -11,7 +11,7 @@ module.exports = {
       name: 'sapi',
       script: 'app.js',
       args: '--env=development',
-      instances: 1, // 'max',
+      instances: 2, // 'max',
       autorestart: true,
       watch: false,
       max_memory_restart: '1G', // '500M'
