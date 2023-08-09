@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>实时聊天</title>
+  <style>
+    #chat {
+      width: 200px;
+      height: 300px;
+      overflow-y: scroll;
+      border: 1px solid #ccc;
+      margin:10px 10px;
+      padding: 10px;
+    }
+    .message-content{
+      margin:10px 10px;
+    }
+    
+    .message {
+      border-radius: 5px;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
+    
+    .message.right {
+      background-color: #e5f4ff;
+      text-align: right;
+      margin-left: auto;
+    }
+    
+    .message.left {
+      background-color: #f3f3f3;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>实时聊天</h1>
+  <div id="chat"></div>
+  <div class="message-content">
+    <form id="message-form">
+      <input type="text" id="message-input">
+      <button type="submit">发送</button>
+    </form>
+  </div>
+  
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const user_name = 'wyp'
+    const user_id = '10004' 
+    const socket = io('localhost:3000',{
+      pingInterval: 10000, // 设置心跳间隔（单位：毫秒）
+      pingTimeout: 5000, // 设置心跳超时时间（单位：毫秒）
+      query: {
+        token: 'your_jwt_token', // 登陆有的token jwt的
+        userName: user_name,
+        userId: user_id,
+      }
+    });
+    
+
+    socket.on('connect', () => {
+      console.log('Connected to server seccess ...');
+      const heartbeat = setInterval(() => {
+        socket.emit('heartbeat'); // 发送心跳消息给服务器
+      }, 10000); // 心跳间隔（单位：毫秒）
+      socket.on('disconnect', reason => {
+        console.log('Disconnected from server reason::: ' + reason);
+        clearInterval(heartbeat); // 停止发送心跳消息
+      });
+      socket.on('heartbeat', () => {
+        console.log('Received heartbeat from server.');
+      });
+
+    });
+    
+    // 接收聊天消息
+    socket.on('chat message', (msg) => {
+      const chat = document.getElementById('chat');
+      
+      // 创建消息元素
+      const message = document.createElement('div');
+      let [msg_from_name, msgStr] = msg.split(':::')
+      if (msg_from_name === user_name){
+        msg_from_name = '我'
+        message.classList.add('message', 'right');
+        message.textContent = `${msgStr} `;
+      } else {
+        message.classList.add('message', 'left');
+        message.textContent = `${msg_from_name}: ${msgStr}`;
+      }
+
+      
+      // 添加消息元素到聊天框
+      chat.appendChild(message);
+      // 滚动聊天框到底部
+      chat.scrollTop = chat.scrollHeight;
+    });
+
+    // 发送聊天消息
+    document.getElementById('message-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = document.getElementById('message-input');
+      const message = input.value;
+      input.value = '';
+      socket.emit('chat message',  `${user_name}::: ${message}`);
+    });
+    
+  </script>
+</body>
+</html>

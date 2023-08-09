@@ -6,6 +6,9 @@ const whiteList = [
   "GET_/appapi/goods",
   "GET_/appapi/spus",
   "GET_/appapi/groups",
+  "GET_/appapi/groups",
+  "GET_/socket.io/",
+  "GET_/socket.io",
 ]
 
 const authJwtMiddleware = async(ctx, next) => {

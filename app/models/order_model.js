@@ -29,7 +29,7 @@ module.exports = {
       let orderPrice = 0
       // 扣减库存
       for(let k in goodsIdItemMap){
-        await GoodsModel.StockCutById(k,goodsIdItemMap[k].amount)
+        let resss = await GoodsModel.StockCutById(k,goodsIdItemMap[k].amount)
         orderPrice += (goodsIdItemMap[k].price * goodsIdItemMap[k].amount)
       }
       // 创建订单

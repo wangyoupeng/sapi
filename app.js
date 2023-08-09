@@ -1,3 +1,4 @@
+const { createServer } = require("http");
 const Koa = require('koa');
 const path = require('path');
 const KoaStatic = require('koa-static');
@@ -8,13 +9,21 @@ const logger = require('./app/libs/logger')
 
 
 let app = new Koa();
+const server = createServer(app.callback());
 
+/**
+ * init socketio server
+ */
+require("./app/socketio")(server)
+
+// 跨域
 const cors = require('koa2-cors');
 app.use(cors({
   origin: '*'
 }));
 
-// 处理异常
+
+// 异常
 const catchError = require('./app/middleware/error');
 app.use(catchError()); 
 
@@ -68,6 +77,6 @@ app.use(appApis()); //
 const cmsApis = require('./app/routers/cmsapis.js');
 app.use(cmsApis());
 
-app.listen(config.app.port, () => {
+server.listen(config.app.port, () => {
   logger.log(`server start at env: ${ config.app.env }  port: ${ config.app.port }`);
 });
