@@ -37,11 +37,13 @@ async function ListMsgs({ id, type }){
   })
   return resList.reverse();
 }
-async function AddMessage({ id, type, sender_id, receiver_id, content }){
-  console.log('-----444--:', {conversation_id: id, sender_id, receiver_id, content})
+async function AddMessage({ id, type, sender_id, receiver_id, content,room_id }){
+  
   if(type === 'room'){
-    roomModel.AddMessage({room_id: id, sender_id, content})
+    console.log('-----444--:', {room_id: room_id, sender_id, content})
+    roomModel.AddMessage({room_id, sender_id, content})
   } else {
+    console.log('-----444--:', {conversation_id: id, sender_id, receiver_id, content})
     conversationModel.AddMessage({conversation_id: id, sender_id, receiver_id, content})
   }
 }

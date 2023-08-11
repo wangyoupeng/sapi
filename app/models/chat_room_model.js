@@ -42,7 +42,7 @@ module.exports = {
       values(?,?,?)`;
     return await db.query(sql, [
       itemInfo.room_id,
-      itemInfo.send_id,
+      itemInfo.sender_id,
       itemInfo.content
     ]);
   },

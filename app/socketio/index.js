@@ -49,15 +49,16 @@ function init_socket_server( server ){
     logger.log(`socket:::  用户 userName: ${userName} userId: ${userId} clients_socketId:${socketId} 连接成功; connection num: ${count}`);
     logger.log('socket:::  所用连接 servers io.engine.all_clients ids ::', Object.keys(all_clients))
     // console.log('所用连接 io.engine.all_clients ::', all_clients)
-    
-    let {list, roomList, convList} = await ioService.List({user_id: userId}) 
+    let {roomList} = await ioService.List({user_id: socket.user.userId}) 
     // 将socket加入到这个用户 所有所在群中
     let usersAllRoomList = roomList.map(i=>i.id)
     socket.join(usersAllRoomList); 
     
     // 用户登陆 返回联系我们页面初始化信息
-    socket.on('init info', () => {
+    socket.on('init info', async () => {
+      let {list} = await ioService.List({user_id: socket.user.userId}) 
       io.to(socketId).emit('init info', list);
+      logger.log(`io.emit ::: ${'init info: '}`, list)
     })
 
     // 历史聊天信息初始化
@@ -69,12 +70,14 @@ function init_socket_server( server ){
           id: i.id,
           text: i.content,
           send: i.sender_id == userId,
-          headimgurl:i.sender_id == userId ? i.sender?.headimgurl : i.receiver?.headimgurl,
+          headimgurl:i.sender?.headimgurl,
           datetime: moment(i.created_at).format("YYYY-MM-DD HH:mm:ss"),
         }
       })
+      
       // 返回聊天信息
       io.to(socketId).emit('init chat', msgList);
+      logger.log(`io.emit ::: ${'init chat: '}`, msgList)
     })
 
     // 监听客户端的心跳事件
@@ -105,8 +108,14 @@ function init_socket_server( server ){
       }
       console.log('22222 sendMsg,targetMsg::', sendMsg,targetMsg)
       // 发送私人消息给指定的连接
-      if(senderSocketId) io.to(senderSocketId).emit('private message', sendMsg);
-      if(targetMsg) io.to(targetSocketId).emit('private message', targetMsg);
+      if(senderSocketId){
+        io.to(senderSocketId).emit('private message', sendMsg);
+        logger.log(`io.emit ::: ${'private message'} '`,sendMsg)
+      }
+      if(targetMsg){
+        io.to(targetSocketId).emit('private message', targetMsg);
+        logger.log(`io.emit ::: ${'private message '}`, targetMsg)
+      }
       let msg = {
         id,
         type: 'conv',
@@ -119,10 +128,20 @@ function init_socket_server( server ){
       ioService.AddMessage(msg)
     });
 
-    socket.on('room message', ({message,toRoomId}) => { // 群聊天
-      io.to(toRoomId).emit('room message', message);
+    socket.on('room message', async({message,id}) => { // 群聊天
+      let uMap  = await ioService.GetMapByUserIds([userId]) // 效率低可以缓存，或前端处理
+      let datetime = moment().format("YYYY-MM-DD HH:mm:ss")
+      let sendMsg = {
+        text: message, 
+        send: true, 
+        headimgurl: uMap[userId]?.headimgurl,
+        datetime
+      }
+
+      io.to(id).emit('room message', sendMsg);
+      logger.log(`io.emit :: ${'room message'} room: ${id}`, sendMsg)
       ioService.AddMessage({
-        conversation_id: id,
+        room_id: id,
         type: 'room',
         sender_id: userId,
         content: message,
@@ -131,13 +150,13 @@ function init_socket_server( server ){
 
     // 全域广播消息
     socket.on('broadcast message', (msg) => {
-      console.log('broadcast message:::', msg)
+      logger.log('broadcast message:::', msg)
       io.emit('broadcast message', msg);
     });
 
     // 异常
     socket.on('error', (error) => {
-      console.log('Socket.IO error:', error);
+      logger.error('Socket.IO error:', error);
       // 进行错误处理
     });
 
@@ -146,7 +165,7 @@ function init_socket_server( server ){
       // ON_LINE_USER_MAP 中删除在线用户
       console.log('有用户断开 ... 断开原因 : ',reason, socket.id);
       let uItem = ON_LINE_USER_MAP[socket.id] || {}
-      delete ON_LINE_USER_MAP[socket.id]
+      // delete ON_LINE_USER_MAP[socket.id]
       io.to(usersAllRoomList).emit("user disconnect",uItem.userId)
     });
   });
