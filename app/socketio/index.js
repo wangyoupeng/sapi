@@ -1,6 +1,7 @@
 const { Server } = require("socket.io");
 const logger = require("../libs/logger");
 const ioService = require("./ioservice");
+const moment = require("moment");
 
 
 const ioServerConf = {
@@ -10,7 +11,7 @@ const ioServerConf = {
     origin: [
       "http://localhost:3000",
       "http://localhost:8080",
-      "http://localhost:8080"
+      "http://localhost:8081"
     ]
   }
 }
@@ -54,9 +55,26 @@ function init_socket_server( server ){
     let usersAllRoomList = roomList.map(i=>i.id)
     socket.join(usersAllRoomList); 
     
-    // 用户登陆 返回页面初始化信息
+    // 用户登陆 返回联系我们页面初始化信息
     socket.on('init info', () => {
       io.to(socketId).emit('init info', list);
+    })
+
+    // 历史聊天信息初始化
+    socket.on('init chat', async ({id, type}) => {
+      // 查询聊天记录
+      let list = await ioService.ListMsgs({id, type})
+      let msgList = list.map(i => {
+        return {
+          id: i.id,
+          text: i.content,
+          send: i.sender_id == userId,
+          headimgurl:i.sender_id == userId ? i.sender?.headimgurl : i.receiver?.headimgurl,
+          datetime: moment(i.created_at).format("YYYY-MM-DD HH:mm:ss"),
+        }
+      })
+      // 返回聊天信息
+      io.to(socketId).emit('init chat', msgList);
     })
 
     // 监听客户端的心跳事件
@@ -67,29 +85,54 @@ function init_socket_server( server ){
     });
 
     // 发送私人消息给特定的连接
-    socket.on('private message', ({message, toUserId}) => {
-      let targetSocketId = ON_LINE_USER_MAP[toUserId] ? ON_LINE_USER_MAP[toUserId].socketId : "xxx" // 暂不考虑离线情况
+    socket.on('private message', async ({message, toUserId, id }) => {
+      console.log('---11---:', {message, toUserId, id })
+      let targetSocketId = ON_LINE_USER_MAP[toUserId] ? ON_LINE_USER_MAP[toUserId].socketId : "" // 暂不考虑离线情况
+      let senderSocketId = ON_LINE_USER_MAP[userId] ? ON_LINE_USER_MAP[userId].socketId : "" // 暂不考虑离线情况
+      let uMap  = await ioService.GetMapByUserIds([userId, toUserId]) // 效率低可以缓存，或前端处理
+      let datetime = moment().format("YYYY-MM-DD HH:mm:ss")
+      let sendMsg = {
+        text: message, 
+        send: true, 
+        headimgurl: uMap[userId]?.headimgurl,
+        datetime
+      }
+      let targetMsg = {
+        text: message, 
+        send: false, 
+        headimgurl: uMap[userId]?.headimgurl,
+        datetime
+      }
+      console.log('22222 sendMsg,targetMsg::', sendMsg,targetMsg)
       // 发送私人消息给指定的连接
-      io.to(targetSocketId).emit('private message', message);
+      if(senderSocketId) io.to(senderSocketId).emit('private message', sendMsg);
+      if(targetMsg) io.to(targetSocketId).emit('private message', targetMsg);
+      let msg = {
+        id,
+        type: 'conv',
+        sender_id: userId,
+        receiver_id: toUserId,
+        content: message,
+      }
+      console.log('3333', msg)
+      // 异步持久化
+      ioService.AddMessage(msg)
     });
 
-    // // 群聊（room）
-    // socket.on('join room', (room) => { // 进入群(房间)
-    //   socket.join(room);
-    //   // 数据库crud todo
-    // });
-    // socket.on('leave room', (room) => { // 离开群
-    //   socket.leave(room);
-    //   // 数据库crud todo
-    // });
     socket.on('room message', ({message,toRoomId}) => { // 群聊天
       io.to(toRoomId).emit('room message', message);
+      ioService.AddMessage({
+        conversation_id: id,
+        type: 'room',
+        sender_id: userId,
+        content: message,
+      })
     });
 
     // 全域广播消息
-    socket.on('chat message', (msg) => {
-      console.log('chat message:::', msg)
-      io.emit('chat message', msg);
+    socket.on('broadcast message', (msg) => {
+      console.log('broadcast message:::', msg)
+      io.emit('broadcast message', msg);
     });
 
     // 异常

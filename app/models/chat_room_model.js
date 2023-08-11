@@ -26,7 +26,7 @@ module.exports = {
   ListRoomsByUserId: async ({ user_id = 1 }) => {
     if(!user_id) return [];
     // search
-    let sql = `select a.room_id as id, b.name as name, b.headimgurl as headimgurl, 'room' as type   
+    let sql = `select b.id as id, b.name as name, b.headimgurl as headimgurl, 'room' as type   
       from ${UserRoomTableName} as a 
       left join ${TableName} as b on a.room_id = b.id  
       where a.is_del=0 
@@ -38,13 +38,20 @@ module.exports = {
   },
   AddMessage: async (itemInfo) => {
     const sql = `insert into ${MessageTableName} 
-      (room_id, sneder_id, content) 
+      (room_id, sender_id, content) 
       values(?,?,?)`;
     return await db.query(sql, [
-      itemInfo.id,
-      itemInfo.send_id || "",
-      itemInfo.content || "",
+      itemInfo.room_id,
+      itemInfo.send_id,
+      itemInfo.content
     ]);
+  },
+  ListMessage: async (itemInfo, limit = 20) => {
+    let room_id = itemInfo.id || 0
+    const sql = `select * from ${MessageTableName} 
+      where room_id = ${room_id} 
+      order by id desc limit ${limit}`;
+    return await db.query(sql);
   },
   
 }

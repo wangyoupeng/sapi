@@ -21,6 +21,14 @@ function authUser(password, hashPwd, salt) {
   return hash === hashPwd
   
 }
+async function ListByUserIds(ids = []){
+  if(ids.length < 1) ids = [0]
+  const uniqueIds = [...new Set(ids)];
+  let idList = uniqueIds.map(i => parseInt(i))
+  let sql = `select * from ${TableName} where is_del=0 `;
+  sql += ` and id in (${ idList.toString() })`
+  return await db.query(sql);
+}
 
 
 module.exports = {
@@ -46,4 +54,18 @@ module.exports = {
   },
   getHashPwdAndSalt,
   authUser,
+  ListByUserIds,
+  GetMapByUserIds: async (ids = []) => {
+    if(ids.length < 1) ids = [0]
+    let uList = await ListByUserIds(ids)
+    let uMap = {}
+    uList.map(i => {
+      uMap[i.id] = {
+        id: i.id,
+        name: i.name,
+        headimgurl: i.headimgurl
+      }
+    })
+    return uMap
+  },
 }

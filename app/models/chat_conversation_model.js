@@ -9,7 +9,7 @@ module.exports = {
   ListFriendsByUserId: async ({ user_id = 1 }) => {
     if(!user_id) return [];
     // search
-    let sql = `select b.id as id, c.name as name, c.headimgurl as headimgurl, 'conv' as type  
+    let sql = `select a.id as id, c.id as user_id, c.name as name, c.headimgurl as headimgurl, 'conv' as type  
     from ${TableName} as a 
     left join ${UserConversationTableName} as b on a.id = b.conversation_id  
     left join ${UserTableName} as c on b.user_id = c.id
@@ -23,14 +23,21 @@ module.exports = {
   },
   AddMessage: async (itemInfo) => {
     const sql = `insert into ${MessageTableName} 
-      (conversation_id, sneder_id, receiver_id, content) 
+      (conversation_id, sender_id, receiver_id, content) 
       values(?,?,?,?)`;
     return await db.query(sql, [
-      itemInfo.id,
-      itemInfo.send_id || "",
-      itemInfo.receiver_id || "",
-      itemInfo.content || "",
+      itemInfo.conversation_id,
+      itemInfo.sender_id,
+      itemInfo.receiver_id,
+      itemInfo.content,
     ]);
+  },
+  ListMessage: async (itemInfo, limit = 20) => {
+    let conversation_id = itemInfo.id || 0
+    const sql = `select * from ${MessageTableName} 
+      where conversation_id = ${conversation_id} 
+      order by id desc limit ${limit}`;
+    return await db.query(sql);
   },
   
 }
