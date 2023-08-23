@@ -14,12 +14,10 @@ function query(sql, params) {
   return new Promise((resolve, reject) => {
     // 取出链接
     pool.getConnection(function (err, connection) {
-
       if (err) {
         reject(err);
         return;
       }
-
       connection.query(sql, params, function (error, results, fields) {
         logger.log(`${ sql }=>${ params }`);
         // 释放连接
@@ -30,7 +28,6 @@ function query(sql, params) {
         }
         resolve(results);
       });
-
     });
   });
 }

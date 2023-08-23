@@ -26,13 +26,23 @@ async function OrderNew (ctx){
 
 
   let goodsListAll = await goodsModel.ListByIds(goodsIdList)
+  let lowStockGoodsList = []
   goodsListAll.map(item => {
+    if(item.amount < goodIdAmountMap['' + item.id]){
+      lowStockGoodsList.push(item.name)
+    }
     let newItem = {...item, ...{amount: goodIdAmountMap['' + item.id]}}
     goodsIdItemMap[item.id] = newItem
   })
-  
-  // goodsVersion TODO
-  // 检查库存 略
+  // 检查商品删除(下架)
+  if(goodsListAll.length < goodsIdList.length){ 
+    return sendApiResult(ctx,{code: 400, message: `有已删除或下架商品，下单失败！`})
+  }
+  // 检查库存
+  if(lowStockGoodsList > 0){
+    return sendApiResult(ctx,{code: 400, message: `${lowStockGoodsList.toString()} 库存不足!`})
+  }
+
   // 下单 （事务）生成order ,order_item, 扣库存
   let isok = orderModel.CreateWhitTransaction({ user_id, goodsIdItemMap, goodIdAmountMap})
   if(isok){
